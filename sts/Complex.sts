@@ -1,0 +1,404 @@
+"" FILE: Complex.sts
+"" IMPLEMENTS: Operations on Complex numbers.
+"" AUTHOR: Ken Dickey
+"" DATE:   8 February 2002
+
+"" COPYRIGHT (c) 2002 by Kenneth A Dickey, All Rights Reserved Worldwide
+""
+"" License:	Licensed to SmallScript, LLC
+
+
+"" Functions from 
+""   _Less Complex Elementary Functions_
+""          by  Henry Baker
+"" ACM SIGPLAN Notices, Volume 27, Number 11, November 1992
+
+
+Method behavior: Real
+[
+asinh
+	^(1/2 * signum(self) * ((1 + (2 * self * self)) acosh))
+]
+
+Method behavior: Real
+[
+acosh
+/*	| pi | := 3.14159265358979323846. */
+	^(if (self >= 1)
+	  then [(self * (1 + ((1 - (1 / (self * self))) sqrt))) ln]
+	  else if ((self abs) <= 1)
+	  then [ (((1 - (self * self)) sqrt) atan2: self)i ]
+	  else [Complex real: ((- self) acosh) imaginary: (Float pi)])
+]
+
+Method behavior: Real
+[
+atanh
+	| x | := self abs.
+	^(if (x < 1)
+	  then [1/2 * (((1 + self) / (1 - self)) ln)]
+	  else [Complex real: ((1/self) atanh) imaginary: (- ((Float pi)/2 * signum(self)))])
+]
+
+Method behavior: Number [
+ln
+	^(if (self < 0)
+	  then [Complex real: (Float log: ((- self) asFloat)) 
+		   imaginary: (Float pi) ]
+	  else [Float log: (self asFloat)])
+]
+
+Method behavior: Number
+[
+signum
+	^(if (self < 0)
+	   then -1
+	   else  1)
+]
+
+
+
+"" ===================
+"" ===== Complex =====
+"" ===================
+
+Method behavior: Complex [
+asString
+        ^(if ((imaginary = 0) or (imaginary = nil))
+	  then [real ifNil: ['0'] ifNotNil: [:r| r.asString]]
+	  else if ((real = 0) or (real = nil))
+	  then [(imaginary asString), 'i']
+	  else ['(', (real asString), ' + ', (imaginary asString), 'i)'])
+]
+
+
+Method behavior: Complex [
+coercionSelector
+
+	<annotations>
+
+	   "Description: The author has not described this method"
+
+		Method Author:		'David Simmons'.
+		Method Created:		'Wed 12/06/2000 03:55:09 AM (PDT)'.
+		Browse Category: 	'numerics-dispatching'.
+
+		Method Scope:		 Default.
+		Scope Access:		'protected'.
+		Method Type: 		'standard'.
+
+		Method Interface:	 none.
+		Method Returns:		 none.
+		Method Throws:		 none.
+
+	</annotations>
+
+   ^#asComplex
+]
+
+
+Method behavior: Complex [
+imag
+	^imaginary
+]
+
+Method behavior: Complex [
+imag: <Number>iVal
+	imaginary := iVal.
+]
+
+Method behavior: Complex [
+* <Complex>other
+	| x1 | := (self  real).
+	| x2 | := (other real).
+	| y1 | := (self  imag).
+	| y2 | := (other imag).
+	^Complex real:      ((x1 * x2) - (y1 * y2)) 
+	     imaginary: ((x1 * y2) + (y1 * x2))
+]
+
+Method behavior: Complex [
+* <!Complex>other
+	^(self * (other asComplex))
+]
+
+Method behavior: Number [
+* <Complex>other
+	^((self asComplex) * other)
+]
+
+
+Method behavior: Complex [
+/ <Complex>other
+	| x1 | := (self  real).
+	| x2 | := (other real).
+	| y1 | := (self  imag).
+	| y2 | := (other imag).
+	^Complex real:  ((x1 * x2) + (y1 * y2)) / ((x2 * x2) + (y2 * y2))
+	     imaginary: ((y1 * x2) - (x1 * y2)) / ((x2 * x2) + (y2 * y2))
+]
+
+Method behavior: Complex [
+/ <!Complex>other
+	^(self / (other asComplex))
+]
+
+Method behavior: Number [
+/ <Complex>other
+	^((self asComplex) / other)
+]
+
+
+Method behavior: Complex [
+squared
+	| x | := real.
+	| y | := imaginary.
+	^Complex real: ((x + y) * (x - y))
+	     imaginary: (2 * x * y)
+]
+
+Method behavior: Complex [
+conjugate
+	| x | := real.
+	| y | := imaginary.
+	^Complex real: x imaginary: (- y)
+]
+
+Method behavior: Complex [
+norm
+	^(self * (self conjugate))
+]
+
+Method behavior: Complex [
+abs
+	| x | := real.
+	| y | := imaginary.
+	^(((x * x) + (y * y)) sqrt)
+]
+
+Method behavior: Complex [
+inverse
+	^(self / (self norm))
+]
+
+Method behavior: Complex [ "NB: signum(0) is 1"
+signum
+	^(self / (self abs))
+]
+
+Method behavior: Complex [
+exp
+	| x | := real.
+        | y | := imaginary.
+	| e2x | := x exp.
+	^(Complex real: (e2x * (y cos)) imaginary: (e2x * (y sin)))
+]
+
+Method behavior: Complex [
+ln
+	| x | := real.
+        | y | := imaginary.
+	^(Complex real: (1/2 * (Float log: (((self abs) squared) asFloat)))
+	     imaginary: (y atan2: x))
+]
+
+
+Method behavior: Complex [
+sin
+	| x | := real.
+	| y | := imaginary.
+	^Complex real: ((x sin) * (y cosh)) imaginary: ((x cos) * (y sinh))
+]
+
+Method behavior: Complex [
+cos
+	| x | := real.
+	| y | := imaginary.
+	^Complex real: ((x cos) * (y cosh)) imaginary: (- ((x sin) * (y sinh)))
+]
+
+Method behavior: Complex [
+tan
+	| x2 | := (real * 2).
+	| y2 | := (imaginary * 2).
+	^Complex real: ((x2 sin) / ((x2 cos) + (y2 cosh)))
+	imaginary: ((y2 tanh) / (1 + ((x2 cos) / (y2 cosh))))
+]
+
+Method behavior: Complex [
+asin
+	| x | := real.
+	| y | := imaginary.
+        | az | := (self abs).
+	| az2 | := az squared.
+        | hairy | := ((((az2 - 1) squared) + (4 * y * y)) sqrt).
+	^Complex real: (1/2 * (x signum) * ((hairy - az2) acos))
+	imaginary: (1/2 * (y signum) * ((hairy + az2) acosh))
+]
+
+Method behavior: Complex [
+acos
+	^((Float pi)/2 - (self asin))
+]
+
+Method behavior: Complex [
+atan
+
+	| x | := real.
+	| y | := imaginary.
+	^Complex real: (1/2 * (if (x ~= 0) 
+				then [(2 * x) atan2: (1 - ((self abs) squared))]
+				else if ((y abs) > 1)
+				then [(Float pi) * signum(x)]
+				else 0))
+	imaginary: (1/2 * (((2 * y) / (1 + ((self abs) squared))) atanh))
+]
+
+Method behavior: Complex [
+sinh
+	| x | := real.
+	| y | := imaginary.
+	^Complex real: ((x sinh) * (y cos)) imaginary: ((x cosh) * (y sin))
+]
+
+Method behavior: Complex [
+cosh
+	| x | := real.
+	| y | := imaginary.
+	^Complex real: ((x cosh) * (y cos)) imaginary: ((x sinh) * (y sin))
+]
+
+Method behavior: Complex [
+tanh
+	| x2 | := (real * 2).
+	| y2 | := (imaginary * 2).
+	^Complex real: ((x2 tanh) / (1 + ((y2 cos)/(x2 cosh))))
+	imaginary: ((y2 sin) / ((x2 cosh) + (y2 cos)))
+]
+
+Method behavior: Complex [
+asinh
+	| x | := real.
+	| y | := imaginary.
+        | az |  := (self abs).
+	| az2 | := az squared.
+        | hairy | := ((((az2 - 1) squared) + (4 * x * x)) sqrt).
+	^Complex real: (1/2 * (x signum) * ((hairy + az2) acosh))
+	imaginary: (1/2 * (y signum) * ((hairy - az2) acos))
+]
+
+Method behavior: Complex [
+acosh
+	| x | := real.
+	| y | := imaginary.
+        | az |  := (self abs).
+	| az2 | := az squared.
+        | hairy | := ((((az2 - 1) squared) + (4 * y * y)) sqrt).
+	^Complex real: (1/2 * ((hairy + az2) acosh))
+	imaginary: (1/2 * (y signum) 
+			* ((Float pi) - ((x signum) * ((hairy - az2) acos))))
+]
+
+Method behavior: Complex [
+atanh
+	| x | := real.
+	| y | := imaginary.
+        | az2 |  := (self abs) squared.
+
+	^Complex real: (1/2 * (((2 * x) / (1 + az2)) atanh))
+	imaginary: (1/2 * (if (y ~= 0) 
+				then [(2 * y) atan2: (1 - az2)]
+				else if ((x abs) > 1)
+				then [(- (Float pi)) * signum(x)]
+				else 0))
+]
+
+/*@ "Uncomment for Quick Check"
+[
+  stdout cr << 'Sample Complex usage:'.
+  stdout cr << ' 3.2i prints as: ' << 3.2i .
+
+  | a | := Complex real: 1/2 imaginary: 2.1 .
+  | b | := Complex real: 3/4 imaginary: 5.7 .
+  stdout cr << '     a = ' << a.
+  stdout cr << '     b = ' << b.
+  stdout cr << ' a + b = ' << (a + b).
+  stdout cr << ' a - b = ' << (a - b).
+  stdout cr << ' a * b = ' << (a * b).
+  stdout cr << ' a * 3 = ' << (a * 3).
+  stdout cr << ' 3 * b = ' << (3 * b).
+  stdout cr << ' a / b = ' << (a / b).
+  stdout cr << ' a / 3 = ' << (a / 3).
+  stdout cr << ' 3 / b = ' << (3 / b).
+
+  stdout cr << 'sin(a) = ' << (a sin).
+  stdout cr << 'cos(a) = ' << (a cos).
+  stdout cr << 'tan(a) = ' << (a tan).
+
+  stdout cr << ' ln(3) = ' << (3 ln).
+  stdout cr << 'ln(-3) = ' << (-3 ln).
+  stdout cr << ' ln(a) = ' << (a ln).
+  stdout cr << 'exp(3) = ' << (3 exp).
+  stdout cr << 'exp(a) = ' << (a exp).
+
+  stdout cr << 'conjugate(a) = ' << (a conjugate).
+  stdout cr << '  inverse(a) = ' << (a inverse).
+  stdout cr << '     norm(a) = ' << (a norm).
+
+  stdout cr << 'asin(sin(a)) = ' << ((a sin) asin).
+  stdout cr << 'acos(cos(a)) = ' << ((a cos) acos).
+  stdout cr << 'atan(tan(a)) = ' << ((a tan) atan).
+
+  stdout cr << '  abs(a - b) = ' << ((a - b) abs).
+  stdout cr << ' norm(a - b) = ' << ((a - b) norm).
+
+  stdout cr << '     sinh(a) = ' << (a sinh).
+  stdout cr << '     cosh(a) = ' << (a cosh).
+  stdout cr << '     tanh(a) = ' << (a tanh).
+  stdout cr << 'asinh(sinh(a)) = ' << ((a sinh) asinh).
+  stdout cr << 'acosh(cosh(a)) = ' << ((a cosh) acosh).
+  stdout cr << 'atanh(tanh(a)) = ' << ((a tanh) atanh).
+  stdout cr.
+] "End Quick Check"
+@*/
+
+/***** Expected Result *****
+
+Sample Complex usage:
+ 3.2i prints as: 3.2i
+     a = ((1/2) + 2.1i)
+     b = ((3/4) + 5.7i)
+ a + b = ((5/4) + 7.8i)
+ a - b = ((-1/4) + -3.6i)
+ a * b = (-11.595 + 4.425i)
+ a * 3 = (1.5 + 6.3i)
+ 3 * b = (2.25 + 17.1i)
+ a / b = (0.373497 + -0.038575i)
+ a / 3 = (0.166667 + 0.7i)
+ 3 / b = (0.0680735 + -0.517359i)
+sin(a) = (1.98689 + 3.52951i)
+cos(a) = (3.63698 + -1.92818i)
+tan(a) = (0.0248288 + 0.983615i)
+ ln(3) = 1.09861
+ln(-3) = (1.09861 + 3.14159i)
+ ln(a) = (0.769508 + 1.33705i)
+exp(3) = 20.0855
+exp(a) = (-0.832351 + 1.42319i)
+conjugate(a) = ((1/2) + -2.1i)
+  inverse(a) = (0.107296 + 0.450644i)
+     norm(a) = 4.66
+asin(sin(a)) = (0.5 + 2.1i)
+acos(cos(a)) = (0.5 + 2.1i)
+atan(tan(a)) = (0.5 + 2.1i)
+  abs(a - b) = 3.60867
+ norm(a - b) = 13.0225
+     sinh(a) = (-0.263073 + 0.973377i)
+     cosh(a) = (-0.569278 + 0.449814i)
+     tanh(a) = (1.11624 + -0.827849i)
+asinh(sinh(a)) = (-0.5 + 1.04159i)
+acosh(cosh(a)) = (0.5 + 2.1i)
+atanh(tanh(a)) = (0.5 + -1.04159i)
+
+*****************/
+
+"  ---  E O F  ---  "

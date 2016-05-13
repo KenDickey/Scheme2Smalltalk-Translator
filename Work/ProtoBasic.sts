@@ -1,0 +1,1853 @@
+
+"Translated from file D:/SmallScript/ProtoScheme/Work/ProtoBasic.scm"
+
+include path: ProtoScheme.sts.
+[
+
+/* (define (nil? obj) (: obj "isKindOf:" ($ "UndefinedObject"))) */
+
+ SchemeAccess.Scheme define:  #'nil?'
+  as: 
+       [ :obj |  ( obj isKindOf: UndefinedObject).].
+
+/* (define (number? obj) (and (: obj "isKindOf:" ($ "Number")) (not (or (boolean? obj) (nil? obj))))) */
+
+ SchemeAccess.Scheme define:  #'number?'
+  as: 
+       [ :obj |  (if ( ( obj isKindOf: Number))
+                then [((SchemeAccess.Scheme globalRef:  #'not')
+                    value: ( [ :temp164 | 
+                    (if ( temp164)
+                        then [ temp164]
+                        else [((SchemeAccess.Scheme globalRef:  #'nil?')
+                            value: ( obj))]).
+               ](((SchemeAccess.Scheme globalRef:  #'boolean?')
+                        value: ( obj)))))]
+                else [ false]).].
+
+/* (define (complex? obj) (and (: obj "isKindOf:" ($ "Complex")) (not (or (boolean? obj) (nil? obj))))) */
+
+ SchemeAccess.Scheme define:  #'complex?'
+  as: 
+       [ :obj |  (if ( ( obj isKindOf: Complex))
+                then [((SchemeAccess.Scheme globalRef:  #'not')
+                    value: ( [ :temp165 | 
+                    (if ( temp165)
+                        then [ temp165]
+                        else [((SchemeAccess.Scheme globalRef:  #'nil?')
+                            value: ( obj))]).
+               ](((SchemeAccess.Scheme globalRef:  #'boolean?')
+                        value: ( obj)))))]
+                else [ false]).].
+
+/* (define (real? obj) (and (: obj "isKindOf:" ($ "Real")) (not (or (boolean? obj) (nil? obj))))) */
+
+ SchemeAccess.Scheme define:  #'real?'
+  as: 
+       [ :obj |  (if ( ( obj isKindOf: Real))
+                then [((SchemeAccess.Scheme globalRef:  #'not')
+                    value: ( [ :temp166 | 
+                    (if ( temp166)
+                        then [ temp166]
+                        else [((SchemeAccess.Scheme globalRef:  #'nil?')
+                            value: ( obj))]).
+               ](((SchemeAccess.Scheme globalRef:  #'boolean?')
+                        value: ( obj)))))]
+                else [ false]).].
+
+/* (define (rational? obj) (and (: obj "isKindOf:" ($ "Fraction")) (not (or (boolean? obj) (nil? obj))))) */
+
+ SchemeAccess.Scheme define:  #'rational?'
+  as: 
+       [ :obj |  (if ( ( obj isKindOf: Fraction))
+                then [((SchemeAccess.Scheme globalRef:  #'not')
+                    value: ( [ :temp167 | 
+                    (if ( temp167)
+                        then [ temp167]
+                        else [((SchemeAccess.Scheme globalRef:  #'nil?')
+                            value: ( obj))]).
+               ](((SchemeAccess.Scheme globalRef:  #'boolean?')
+                        value: ( obj)))))]
+                else [ false]).].
+
+/* (define (integer? obj) (and (: obj "isKindOf:" ($ "Integer")) (not (or (boolean? obj) (nil? obj))))) */
+
+ SchemeAccess.Scheme define:  #'integer?'
+  as: 
+       [ :obj |  (if ( ( obj isKindOf: Integer))
+                then [((SchemeAccess.Scheme globalRef:  #'not')
+                    value: ( [ :temp168 | 
+                    (if ( temp168)
+                        then [ temp168]
+                        else [((SchemeAccess.Scheme globalRef:  #'nil?')
+                            value: ( obj))]).
+               ](((SchemeAccess.Scheme globalRef:  #'boolean?')
+                        value: ( obj)))))]
+                else [ false]).].
+
+/* (define (exact? n) (or (integer? n) (rational? n))) */
+
+ SchemeAccess.Scheme define:  #'exact?'
+  as: 
+       [ :n |  [ :temp169 | 
+                (if ( temp169)
+                    then [ temp169]
+                    else [((SchemeAccess.Scheme globalRef:  #'rational?')
+                        value: ( n))]).
+           ](((SchemeAccess.Scheme globalRef:  #'integer?')
+                    value: ( n))).].
+
+/* (define (inexact? n) (not (exact? n))) */
+
+ SchemeAccess.Scheme define:  #'inexact?'
+  as: 
+       [ :n | ((SchemeAccess.Scheme globalRef:  #'not')
+                value: (((SchemeAccess.Scheme globalRef:  #'exact?')
+                value: ( n)))).].
+
+/* (define (reduce op seed list) (if (null? list) seed (reduce op (op seed (car list)) (cdr list)))) */
+
+ SchemeAccess.Scheme define:  #'reduce'
+  as: 
+       [ :op :seed :list |  (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                    value: ( list)))
+                then [ seed]
+                else [((SchemeAccess.Scheme globalRef:  #'reduce')
+                    value: ( op) value: ((op value: ( seed) value: (((SchemeAccess.Scheme globalRef:  #'car')
+                    value: ( list))))) value: (((SchemeAccess.Scheme globalRef:  #'cdr')
+                    value: ( list))))]).].
+
+/* (define (nary-and op seed list) (cond ((null? list) #t) ((op seed (car list)) (nary-and op (car list) (cdr list))) (else #f))) */
+
+ SchemeAccess.Scheme define:  #'nary-and'
+  as: 
+       [ :op :seed :list |  (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                    value: ( list)))
+                then [ true]
+                else [ (if ((op value: ( seed) value: (((SchemeAccess.Scheme globalRef:  #'car')
+                        value: ( list)))))
+                    then [((SchemeAccess.Scheme globalRef:  #'nary-and')
+                        value: ( op) value: (((SchemeAccess.Scheme globalRef:  #'car')
+                        value: ( list))) value: (((SchemeAccess.Scheme globalRef:  #'cdr')
+                        value: ( list))))]
+                    else [ false])]).].
+
+/* (define (= x1 . others) (nary-and (lambda (x1 x2) (: x1 = x2)) x1 others)) */
+
+ SchemeAccess.Scheme define:  #'='
+  as: 
+       [ :x1 | 
+           | others | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| others add: (thisContext.contextArgAt(idx))].
+           others := (others asPair).
+           ((SchemeAccess.Scheme globalRef:  #'nary-and')
+                value: (
+           [ :x1 :x2 |  ( x1 = x2).]) value: ( x1) value: ( others)).].
+
+/* (define (< x1 . others) (nary-and (lambda (x1 x2) (: x1 < x2)) x1 others)) */
+
+ SchemeAccess.Scheme define:  #'<'
+  as: 
+       [ :x1 | 
+           | others | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| others add: (thisContext.contextArgAt(idx))].
+           others := (others asPair).
+           ((SchemeAccess.Scheme globalRef:  #'nary-and')
+                value: (
+           [ :x1 :x2 |  ( x1 < x2).]) value: ( x1) value: ( others)).].
+
+/* (define (> x1 . others) (nary-and (lambda (x1 x2) (: x1 > x2)) x1 others)) */
+
+ SchemeAccess.Scheme define:  #'>'
+  as: 
+       [ :x1 | 
+           | others | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| others add: (thisContext.contextArgAt(idx))].
+           others := (others asPair).
+           ((SchemeAccess.Scheme globalRef:  #'nary-and')
+                value: (
+           [ :x1 :x2 |  ( x1 > x2).]) value: ( x1) value: ( others)).].
+
+/* (define (<= x1 . others) (nary-and (lambda (x1 x2) (: x1 <= x2)) x1 others)) */
+
+ SchemeAccess.Scheme define:  #'<='
+  as: 
+       [ :x1 | 
+           | others | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| others add: (thisContext.contextArgAt(idx))].
+           others := (others asPair).
+           ((SchemeAccess.Scheme globalRef:  #'nary-and')
+                value: (
+           [ :x1 :x2 |  ( x1 <= x2).]) value: ( x1) value: ( others)).].
+
+/* (define (>= x1 . others) (nary-and (lambda (x1 x2) (: x1 >= x2)) x1 others)) */
+
+ SchemeAccess.Scheme define:  #'>='
+  as: 
+       [ :x1 | 
+           | others | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| others add: (thisContext.contextArgAt(idx))].
+           others := (others asPair).
+           ((SchemeAccess.Scheme globalRef:  #'nary-and')
+                value: (
+           [ :x1 :x2 |  ( x1 >= x2).]) value: ( x1) value: ( others)).].
+
+/* (define (zero? z) (: n "isZero")) */
+
+ SchemeAccess.Scheme define:  #'zero?'
+  as: 
+       [ :z |  ( (SchemeAccess.Scheme globalRef:  #'n')
+                isZero).].
+
+/* (define (positive? x) (: x > 0)) */
+
+ SchemeAccess.Scheme define:  #'positive?'
+  as: 
+       [ :x |  ( x > 0).].
+
+/* (define (negative? x) (: x < 0)) */
+
+ SchemeAccess.Scheme define:  #'negative?'
+  as: 
+       [ :x |  ( x < 0).].
+
+/* (define (odd? n) (: n odd)) */
+
+ SchemeAccess.Scheme define:  #'odd?'
+  as: 
+       [ :n |  ( n odd).].
+
+/* (define (even? n) (: n even)) */
+
+ SchemeAccess.Scheme define:  #'even?'
+  as: 
+       [ :n |  ( n even).].
+
+/* (define (max x . others) (reduce (lambda (x1 x2) (: x1 max: x2)) x others)) */
+
+ SchemeAccess.Scheme define:  #'max'
+  as: 
+       [ :x | 
+           | others | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| others add: (thisContext.contextArgAt(idx))].
+           others := (others asPair).
+           ((SchemeAccess.Scheme globalRef:  #'reduce')
+                value: (
+           [ :x1 :x2 |  ( x1 max: x2).]) value: ( x) value: ( others)).].
+
+/* (define (min x . others) (reduce (lambda (x1 x2) (: x1 min: x2)) x others)) */
+
+ SchemeAccess.Scheme define:  #'min'
+  as: 
+       [ :x | 
+           | others | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| others add: (thisContext.contextArgAt(idx))].
+           others := (others asPair).
+           ((SchemeAccess.Scheme globalRef:  #'reduce')
+                value: (
+           [ :x1 :x2 |  ( x1 min: x2).]) value: ( x) value: ( others)).].
+
+/* (define (+ . things) (reduce (lambda (x1 x2) (: x1 + x2)) 0 things)) */
+
+ SchemeAccess.Scheme define:  #'+'
+  as: 
+       [
+           | things | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| things add: (thisContext.contextArgAt(idx))].
+           things := (things asPair).
+           ((SchemeAccess.Scheme globalRef:  #'reduce')
+                value: (
+           [ :x1 :x2 |  ( x1 + x2).]) value: ( 0) value: ( things)).].
+
+/* (define (* . things) (reduce (lambda (x1 x2) (: x1 * x2)) 1 things)) */
+
+ SchemeAccess.Scheme define:  #'*'
+  as: 
+       [
+           | things | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| things add: (thisContext.contextArgAt(idx))].
+           things := (things asPair).
+           ((SchemeAccess.Scheme globalRef:  #'reduce')
+                value: (
+           [ :x1 :x2 |  ( x1 * x2).]) value: ( 1) value: ( things)).].
+
+/* (define (uncommunitive-reduce op seed things) (case (length things) ((0) seed) ((1) (op seed (car things))) ((2) (op (car things) (cadr things))) (else (reduce op (op (car things) (cadr things)) (cddr things))))) */
+
+ SchemeAccess.Scheme define:  #'uncommunitive-reduce'
+  as: 
+       [ :op :seed :things |  [ :key170 | 
+                (if (((SchemeAccess.Scheme globalRef:  #'memv')
+                        value: ( key170) value: ( ({ 0. } asPair))))
+                    then [ seed]
+                    else [ [ :key171 | 
+                        (if (((SchemeAccess.Scheme globalRef:  #'memv')
+                                value: ( key171) value: ( ({ 1. } asPair))))
+                            then [(op value: ( seed) value: (((SchemeAccess.Scheme globalRef:  #'car')
+                                value: ( things))))]
+                            else [ [ :key172 | 
+                                (if (((SchemeAccess.Scheme globalRef:  #'memv')
+                                        value: ( key172) value: ( ({ 2. } asPair))))
+                                    then [(op value: (((SchemeAccess.Scheme globalRef:  #'car')
+                                        value: ( things))) value: (((SchemeAccess.Scheme globalRef:  #'cadr')
+                                        value: ( things))))]
+                                    else [ [
+                                      key172.
+                                     ((SchemeAccess.Scheme globalRef:  #'reduce')
+                                          value: ( op) value: ((op value: (((SchemeAccess.Scheme globalRef:  #'car')
+                                          value: ( things))) value: (((SchemeAccess.Scheme globalRef:  #'cadr')
+                                          value: ( things))))) value: (((SchemeAccess.Scheme globalRef:  #'cddr')
+                                          value: ( things)))).
+                                    ] value.]).
+                           ]( key171)]).
+                   ]( key170)]).
+           ](((SchemeAccess.Scheme globalRef:  #'length')
+                    value: ( things))).].
+
+/* (define (- . things) (uncommunitive-reduce (lambda (x1 x2) (: x1 - x2)) 0 things)) */
+
+ SchemeAccess.Scheme define:  #'-'
+  as: 
+       [
+           | things | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| things add: (thisContext.contextArgAt(idx))].
+           things := (things asPair).
+           ((SchemeAccess.Scheme globalRef:  #'uncommunitive-reduce')
+                value: (
+           [ :x1 :x2 |  ( x1 - x2).]) value: ( 0) value: ( things)).].
+
+/* (define (/ . things) (uncommunitive-reduce (lambda (x1 x2) (: x1 / x2)) 1 things)) */
+
+ SchemeAccess.Scheme define:  #'/'
+  as: 
+       [
+           | things | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| things add: (thisContext.contextArgAt(idx))].
+           things := (things asPair).
+           ((SchemeAccess.Scheme globalRef:  #'uncommunitive-reduce')
+                value: (
+           [ :x1 :x2 |  ( x1 / x2).]) value: ( 1) value: ( things)).].
+
+/* (define (abs n) (: n abs)) */
+
+ SchemeAccess.Scheme define:  #'abs'
+  as: 
+       [ :n |  ( n abs).].
+
+/* (define (quotient n1 n2) (: n1 quo: n2)) */
+
+ SchemeAccess.Scheme define:  #'quotient'
+  as: 
+       [ :n1 :n2 |  ( n1 quo: n2).].
+
+/* (define (remainder n1 n2) (: n1 rem: n2)) */
+
+ SchemeAccess.Scheme define:  #'remainder'
+  as: 
+       [ :n1 :n2 |  ( n1 rem: n2).].
+
+/* (define (modulo n1 n2) (let ((rem (remainder n1 n2))) (if (> n2 0) (if (< rem 0) (+ rem n2) rem) (if (> rem 0) (+ rem n2) rem)))) */
+
+ SchemeAccess.Scheme define:  #'modulo'
+  as: 
+       [ :n1 :n2 |  [ :rem | 
+                (if (((SchemeAccess.Scheme globalRef:  #'>')
+                        value: ( n2) value: ( 0)))
+                    then [ (if (((SchemeAccess.Scheme globalRef:  #'<')
+                            value: ( rem) value: ( 0)))
+                        then [((SchemeAccess.Scheme globalRef:  #'+')
+                            value: ( rem) value: ( n2))]
+                        else [ rem])]
+                    else [ (if (((SchemeAccess.Scheme globalRef:  #'>')
+                            value: ( rem) value: ( 0)))
+                        then [((SchemeAccess.Scheme globalRef:  #'+')
+                            value: ( rem) value: ( n2))]
+                        else [ rem])]).
+           ](((SchemeAccess.Scheme globalRef:  #'remainder')
+                    value: ( n1) value: ( n2))).].
+
+/* (define (gcd . numbers) (uncommunitive-reduce (lambda (n1 n2) (: n1 gcd: n2)) 0 numbers)) */
+
+ SchemeAccess.Scheme define:  #'gcd'
+  as: 
+       [
+           | numbers | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| numbers add: (thisContext.contextArgAt(idx))].
+           numbers := (numbers asPair).
+           ((SchemeAccess.Scheme globalRef:  #'uncommunitive-reduce')
+                value: (
+           [ :n1 :n2 |  ( n1 gcd: n2).]) value: ( 0) value: ( numbers)).].
+
+/* (define (lcm . numbers) (uncommunitive-reduce (lambda (n1 n2) (: n1 lcm: n2)) 1 numbers)) */
+
+ SchemeAccess.Scheme define:  #'lcm'
+  as: 
+       [
+           | numbers | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| numbers add: (thisContext.contextArgAt(idx))].
+           numbers := (numbers asPair).
+           ((SchemeAccess.Scheme globalRef:  #'uncommunitive-reduce')
+                value: (
+           [ :n1 :n2 |  ( n1 lcm: n2).]) value: ( 1) value: ( numbers)).].
+
+/* (define (factorial n) (: n factorial)) */
+
+ SchemeAccess.Scheme define:  #'factorial'
+  as: 
+       [ :n |  ( n factorial).].
+
+/* (define (numerator q) (: q numerator)) */
+
+ SchemeAccess.Scheme define:  #'numerator'
+  as: 
+       [ :q |  ( q numerator).].
+
+/* (define (denominator q) (: q denominator)) */
+
+ SchemeAccess.Scheme define:  #'denominator'
+  as: 
+       [ :q |  ( q denominator).].
+
+/* (define (floor x) (: x floor)) */
+
+ SchemeAccess.Scheme define:  #'floor'
+  as: 
+       [ :x |  ( x floor).].
+
+/* (define (ceiling x) (: x ceiling)) */
+
+ SchemeAccess.Scheme define:  #'ceiling'
+  as: 
+       [ :x |  ( x ceiling).].
+
+/* (define (truncate x) (: x truncated)) */
+
+ SchemeAccess.Scheme define:  #'truncate'
+  as: 
+       [ :x |  ( x truncated).].
+
+/* (define (round x) (: x rounded)) */
+
+ SchemeAccess.Scheme define:  #'round'
+  as: 
+       [ :x |  ( x rounded).].
+
+/* (define (exp z) (: z exp)) */
+
+ SchemeAccess.Scheme define:  #'exp'
+  as: 
+       [ :z |  ( z exp).].
+
+/* (define (log z) (: z ln)) */
+
+ SchemeAccess.Scheme define:  #'log'
+  as: 
+       [ :z |  ( z ln).].
+
+/* (define (sin z) (: z sin)) */
+
+ SchemeAccess.Scheme define:  #'sin'
+  as: 
+       [ :z |  ( z sin).].
+
+/* (define (cos z) (: z cos)) */
+
+ SchemeAccess.Scheme define:  #'cos'
+  as: 
+       [ :z |  ( z cos).].
+
+/* (define (tan z) (: z tan)) */
+
+ SchemeAccess.Scheme define:  #'tan'
+  as: 
+       [ :z |  ( z tan).].
+
+/* (define (asin z) (: z "arcSin")) */
+
+ SchemeAccess.Scheme define:  #'asin'
+  as: 
+       [ :z |  ( z arcSin).].
+
+/* (define (acos z) (: z "arcCos")) */
+
+ SchemeAccess.Scheme define:  #'acos'
+  as: 
+       [ :z |  ( z arcCos).].
+
+/* (define (atan x) (: x "arcTan")) */
+
+ SchemeAccess.Scheme define:  #'atan'
+  as: 
+       [ :x |  ( x arcTan).].
+
+/* (define (atan y x) (if (null? x) (: y "arcTan") (: (: y / (: (: (: x * x) + (: y * y)) sqrt)) "arcSin"))) */
+
+ SchemeAccess.Scheme define:  #'atan'
+  as: 
+       [ :y :x |  (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                    value: ( x)))
+                then [ ( y arcTan)]
+                else [ ( ( y / ( ( ( x * x) + ( y * y)) sqrt)) arcSin)]).].
+
+/* (define (sqrt z) (: z sqrt)) */
+
+ SchemeAccess.Scheme define:  #'sqrt'
+  as: 
+       [ :z |  ( z sqrt).].
+
+/* (define (expt z1 z2) (: z1 "raisedTo:" z2)) */
+
+ SchemeAccess.Scheme define:  #'expt'
+  as: 
+       [ :z1 :z2 |  ( z1 raisedTo: z2).].
+
+/* (define (make-rectangular x1 x2) (error "Complex numbers not yet implemented")) */
+
+ SchemeAccess.Scheme define:  #'make-rectangular'
+  as: 
+       [ :x1 :x2 | ((SchemeAccess.Scheme globalRef:  #'error')
+                value: ( 'Complex numbers not yet implemented')).].
+
+/* (define (make-polar x3 x4) (error "Complex numbers not yet implemented")) */
+
+ SchemeAccess.Scheme define:  #'make-polar'
+  as: 
+       [ :x3 :x4 | ((SchemeAccess.Scheme globalRef:  #'error')
+                value: ( 'Complex numbers not yet implemented')).].
+
+/* (define (real-part z) (error "Complex numbers not yet implemented")) */
+
+ SchemeAccess.Scheme define:  #'real-part'
+  as: 
+       [ :z | ((SchemeAccess.Scheme globalRef:  #'error')
+                value: ( 'Complex numbers not yet implemented')).].
+
+/* (define (imag-part z) (error "Complex numbers not yet implemented")) */
+
+ SchemeAccess.Scheme define:  #'imag-part'
+  as: 
+       [ :z | ((SchemeAccess.Scheme globalRef:  #'error')
+                value: ( 'Complex numbers not yet implemented')).].
+
+/* (define (magnitude z) (error "Complex numbers not yet implemented")) */
+
+ SchemeAccess.Scheme define:  #'magnitude'
+  as: 
+       [ :z | ((SchemeAccess.Scheme globalRef:  #'error')
+                value: ( 'Complex numbers not yet implemented')).].
+
+/* (define (angle z) (error "Complex numbers not yet implemented")) */
+
+ SchemeAccess.Scheme define:  #'angle'
+  as: 
+       [ :z | ((SchemeAccess.Scheme globalRef:  #'error')
+                value: ( 'Complex numbers not yet implemented')).].
+
+/* (define (degrees->radians d) (: d "degreesToRadians")) */
+
+ SchemeAccess.Scheme define:  #'degrees->radians'
+  as: 
+       [ :d |  ( d degreesToRadians).].
+
+/* (define (radians->degrees r) (: r "radiansToDegrees")) */
+
+ SchemeAccess.Scheme define:  #'radians->degrees'
+  as: 
+       [ :r |  ( r radiansToDegrees).].
+
+/* (define (exact->inexact z) (+ z ($ "0.0"))) */
+
+ SchemeAccess.Scheme define:  #'exact->inexact'
+  as: 
+       [ :z | ((SchemeAccess.Scheme globalRef:  #'+')
+                value: ( z) value: ( 0.0)).].
+
+/* (define (inexact->exact z) (: z round)) */
+
+ SchemeAccess.Scheme define:  #'inexact->exact'
+  as: 
+       [ :z |  ( z round).].
+
+/* (define (number->string z) (: z "asSchemeString")) */
+
+ SchemeAccess.Scheme define:  #'number->string'
+  as: 
+       [ :z |  ( z asSchemeString).].
+
+/* (define (boolean? obj) (: obj "isKindOf:" ($ "Boolean"))) */
+
+ SchemeAccess.Scheme define:  #'boolean?'
+  as: 
+       [ :obj |  ( obj isKindOf: Boolean).].
+
+/* (define (not b) (if (: b == #f) #t #f)) */
+
+ SchemeAccess.Scheme define:  #'not'
+  as: 
+       [ :b |  (if ( ( b == false))
+                then [ true]
+                else [ false]).].
+
+/* (define (pair? obj) (: obj "isPair")) */
+
+ SchemeAccess.Scheme define:  #'pair?'
+  as: 
+       [ :obj |  ( obj isPair).].
+
+/* (define (cons obj1 obj2) (: ($ "Pair") car: obj1 cdr: obj2)) */
+
+ SchemeAccess.Scheme define:  #'cons'
+  as: 
+       [ :obj1 :obj2 |  ( Pair car: obj1 cdr: obj2).].
+
+/* (define (car pair) (: pair car)) */
+
+ SchemeAccess.Scheme define:  #'car'
+  as: 
+       [ :pair |  ( pair car).].
+
+/* (define (cdr pair) (: pair cdr)) */
+
+ SchemeAccess.Scheme define:  #'cdr'
+  as: 
+       [ :pair |  ( pair cdr).].
+
+/* (define (set-car! pair obj) (: pair "setCar:" obj)) */
+
+ SchemeAccess.Scheme define:  #'set-car!'
+  as: 
+       [ :pair :obj |  ( pair setCar: obj).].
+
+/* (define (set-cdr! pair obj) (: pair "setCdr:" obj)) */
+
+ SchemeAccess.Scheme define:  #'set-cdr!'
+  as: 
+       [ :pair :obj |  ( pair setCdr: obj).].
+
+/* (define (caar pair) (: pair caar)) */
+
+ SchemeAccess.Scheme define:  #'caar'
+  as: 
+       [ :pair |  ( pair caar).].
+
+/* (define (cadr pair) (: pair cadr)) */
+
+ SchemeAccess.Scheme define:  #'cadr'
+  as: 
+       [ :pair |  ( pair cadr).].
+
+/* (define (cddr pair) (: pair cddr)) */
+
+ SchemeAccess.Scheme define:  #'cddr'
+  as: 
+       [ :pair |  ( pair cddr).].
+
+/* (define (cdar pair) (: pair cdar)) */
+
+ SchemeAccess.Scheme define:  #'cdar'
+  as: 
+       [ :pair |  ( pair cdar).].
+
+/* (define (caaar pair) (: pair caaar)) */
+
+ SchemeAccess.Scheme define:  #'caaar'
+  as: 
+       [ :pair |  ( pair caaar).].
+
+/* (define (caadr pair) (: pair caadr)) */
+
+ SchemeAccess.Scheme define:  #'caadr'
+  as: 
+       [ :pair |  ( pair caadr).].
+
+/* (define (cadar pair) (: pair cadar)) */
+
+ SchemeAccess.Scheme define:  #'cadar'
+  as: 
+       [ :pair |  ( pair cadar).].
+
+/* (define (cdaar pair) (: pair cdaar)) */
+
+ SchemeAccess.Scheme define:  #'cdaar'
+  as: 
+       [ :pair |  ( pair cdaar).].
+
+/* (define (caddr pair) (: pair caddr)) */
+
+ SchemeAccess.Scheme define:  #'caddr'
+  as: 
+       [ :pair |  ( pair caddr).].
+
+/* (define (cdadr pair) (: pair cdadr)) */
+
+ SchemeAccess.Scheme define:  #'cdadr'
+  as: 
+       [ :pair |  ( pair cdadr).].
+
+/* (define (cdddr pair) (: pair cdddr)) */
+
+ SchemeAccess.Scheme define:  #'cdddr'
+  as: 
+       [ :pair |  ( pair cdddr).].
+
+/* (define (cddar pair) (: pair cddar)) */
+
+ SchemeAccess.Scheme define:  #'cddar'
+  as: 
+       [ :pair |  ( pair cddar).].
+
+/* (define (caaaar pair) (: pair caaadr)) */
+
+ SchemeAccess.Scheme define:  #'caaaar'
+  as: 
+       [ :pair |  ( pair caaadr).].
+
+/* (define (caaadr pair) (: pair caaadr)) */
+
+ SchemeAccess.Scheme define:  #'caaadr'
+  as: 
+       [ :pair |  ( pair caaadr).].
+
+/* (define (caadar pair) (: pair caadar)) */
+
+ SchemeAccess.Scheme define:  #'caadar'
+  as: 
+       [ :pair |  ( pair caadar).].
+
+/* (define (cadaar pair) (: pair cadaar)) */
+
+ SchemeAccess.Scheme define:  #'cadaar'
+  as: 
+       [ :pair |  ( pair cadaar).].
+
+/* (define (cdaaar pair) (: pair cdaaar)) */
+
+ SchemeAccess.Scheme define:  #'cdaaar'
+  as: 
+       [ :pair |  ( pair cdaaar).].
+
+/* (define (caaddr pair) (: pair caaddr)) */
+
+ SchemeAccess.Scheme define:  #'caaddr'
+  as: 
+       [ :pair |  ( pair caaddr).].
+
+/* (define (cadadr pair) (: pair cadadr)) */
+
+ SchemeAccess.Scheme define:  #'cadadr'
+  as: 
+       [ :pair |  ( pair cadadr).].
+
+/* (define (cdaadr pair) (: pair cdaadr)) */
+
+ SchemeAccess.Scheme define:  #'cdaadr'
+  as: 
+       [ :pair |  ( pair cdaadr).].
+
+/* (define (caddar pair) (: pair caddar)) */
+
+ SchemeAccess.Scheme define:  #'caddar'
+  as: 
+       [ :pair |  ( pair caddar).].
+
+/* (define (cdadar pair) (: pair cdadar)) */
+
+ SchemeAccess.Scheme define:  #'cdadar'
+  as: 
+       [ :pair |  ( pair cdadar).].
+
+/* (define (cadddr pair) (: pair cadddr)) */
+
+ SchemeAccess.Scheme define:  #'cadddr'
+  as: 
+       [ :pair |  ( pair cadddr).].
+
+/* (define (cdaddr pair) (: pair cdaddr)) */
+
+ SchemeAccess.Scheme define:  #'cdaddr'
+  as: 
+       [ :pair |  ( pair cdaddr).].
+
+/* (define (cddadr pair) (: pair cddadr)) */
+
+ SchemeAccess.Scheme define:  #'cddadr'
+  as: 
+       [ :pair |  ( pair cddadr).].
+
+/* (define (cdddar pair) (: pair cdddar)) */
+
+ SchemeAccess.Scheme define:  #'cdddar'
+  as: 
+       [ :pair |  ( pair cdddar).].
+
+/* (define (cddddr pair) (: pair cddddr)) */
+
+ SchemeAccess.Scheme define:  #'cddddr'
+  as: 
+       [ :pair |  ( pair cddddr).].
+
+/* (define (null? obj) (: obj "isKindOf:" "UndefinedObject")) */
+
+ SchemeAccess.Scheme define:  #'null?'
+  as: 
+       [ :obj |  ( obj isKindOf: 'UndefinedObject').].
+
+/* (define (list? obj) (and (: obj "isKindOf:" ($ "Pair")) (: obj "isProper"))) */
+
+ SchemeAccess.Scheme define:  #'list?'
+  as: 
+       [ :obj |  (if ( ( obj isKindOf: Pair))
+                then [ ( obj isProper)]
+                else [ false]).].
+
+/* (define (length list) (: list length)) */
+
+ SchemeAccess.Scheme define:  #'length'
+  as: 
+       [ :list |  ( list length).].
+
+/* (define (set-last-pair list thing) (cond ((null? list) thing) ((not (pair? list)) (error "set-last-pair: expected a list" list)) (else (let loop ((result '()) (last-pair '()) (old list)) (if (or (null? old) (not (pair? old))) (begin (set-cdr! last-pair thing) result) (let ((new (cons (car old) '()))) (if (null? last-pair) (loop new new (cdr old)) (begin (set-cdr! last-pair new) (loop result new (cdr old)))))))))) */
+
+ SchemeAccess.Scheme define:  #'set-last-pair'
+  as: 
+       [ :list :thing |  (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                    value: ( list)))
+                then [ thing]
+                else [ (if (((SchemeAccess.Scheme globalRef:  #'not')
+                        value: (((SchemeAccess.Scheme globalRef:  #'pair?')
+                        value: ( list)))))
+                    then [((SchemeAccess.Scheme globalRef:  #'error')
+                        value: ( 'set-last-pair: expected a list') value: ( list))]
+                    else [
+                    [ | loop | := 
+                       [ :result :lastX2Dpair :old | 
+                        (if ( [ :temp173 | 
+                                (if ( temp173)
+                                    then [ temp173]
+                                    else [((SchemeAccess.Scheme globalRef:  #'not')
+                                        value: (((SchemeAccess.Scheme globalRef:  #'pair?')
+                                        value: ( old))))]).
+                           ](((SchemeAccess.Scheme globalRef:  #'null?')
+                                    value: ( old))))
+                            then [ [
+                             ((SchemeAccess.Scheme globalRef:  #'set-cdr!')
+                                  value: ( lastX2Dpair) value: ( thing)).
+                              result.
+                            ] value.]
+                            else [ [ :new | 
+                                (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                                        value: ( lastX2Dpair)))
+                                    then [(loop value: ( new) value: ( new) value: (((SchemeAccess.Scheme globalRef:  #'cdr')
+                                        value: ( old))))]
+                                    else [ [
+                                     ((SchemeAccess.Scheme globalRef:  #'set-cdr!')
+                                          value: ( lastX2Dpair) value: ( new)).
+                                     (loop value: ( result) value: ( new) value: (((SchemeAccess.Scheme globalRef:  #'cdr')
+                                          value: ( old)))).
+                                    ] value.]).
+                           ](((SchemeAccess.Scheme globalRef:  #'cons')
+                                    value: (((SchemeAccess.Scheme globalRef:  #'car')
+                                    value: ( old))) value: ( nil)))])
+                   ].
+                   loop valueWithArguments: {
+                        nil. 
+                        nil. 
+                        list. } ] value])]).].
+
+/* (define (append . lists) (if (null? lists) '() (let loop ((lists lists)) (if (null? (cdr lists)) (car lists) (set-last-pair (car lists) (loop (cdr lists))))))) */
+
+ SchemeAccess.Scheme define:  #'append'
+  as: 
+       [
+           | lists | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| lists add: (thisContext.contextArgAt(idx))].
+           lists := (lists asPair).
+            (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                    value: ( lists)))
+                then [ nil]
+                else [
+                [ | loop | := 
+                   [ :lists | 
+                    (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                            value: (((SchemeAccess.Scheme globalRef:  #'cdr')
+                            value: ( lists)))))
+                        then [((SchemeAccess.Scheme globalRef:  #'car')
+                            value: ( lists))]
+                        else [((SchemeAccess.Scheme globalRef:  #'set-last-pair')
+                            value: (((SchemeAccess.Scheme globalRef:  #'car')
+                            value: ( lists))) value: ((loop value: (((SchemeAccess.Scheme globalRef:  #'cdr')
+                            value: ( lists))))))])
+               ].
+               loop valueWithArguments: {
+                    lists. } ] value]).].
+
+/* (define (append! list1 list2) (: list1 "appendBang:" list2)) */
+
+ SchemeAccess.Scheme define:  #'append!'
+  as: 
+       [ :list1 :list2 |  ( list1 appendBang: list2).].
+
+/* (define (reverse list) (: list reverse)) */
+
+ SchemeAccess.Scheme define:  #'reverse'
+  as: 
+       [ :list |  ( list reverse).].
+
+/* (define (list-tail list k) (if (<= 0 k) list (list-tail (cdr list) (- k 1)))) */
+
+ SchemeAccess.Scheme define:  #'list-tail'
+  as: 
+       [ :list :k |  (if (((SchemeAccess.Scheme globalRef:  #'<=')
+                    value: ( 0) value: ( k)))
+                then [ list]
+                else [((SchemeAccess.Scheme globalRef:  #'list-tail')
+                    value: (((SchemeAccess.Scheme globalRef:  #'cdr')
+                    value: ( list))) value: (((SchemeAccess.Scheme globalRef:  #'-')
+                    value: ( k) value: ( 1))))]).].
+
+/* (define (list-ref list k) (car (list-tail list k))) */
+
+ SchemeAccess.Scheme define:  #'list-ref'
+  as: 
+       [ :list :k | ((SchemeAccess.Scheme globalRef:  #'car')
+                value: (((SchemeAccess.Scheme globalRef:  #'list-tail')
+                value: ( list) value: ( k)))).].
+
+/* (define (last-pair list) (: list "lastPair")) */
+
+ SchemeAccess.Scheme define:  #'last-pair'
+  as: 
+       [ :list |  ( list lastPair).].
+
+/* (define (set-last-pair! list thing) (set-cdr! (last-pair list) thing) list) */
+
+ SchemeAccess.Scheme define:  #'set-last-pair!'
+  as: 
+       [ :list :thing | ((SchemeAccess.Scheme globalRef:  #'set-cdr!')
+                value: (((SchemeAccess.Scheme globalRef:  #'last-pair')
+                value: ( list))) value: ( thing)). list.].
+
+/* (define (memq obj list) (: list detect: (lambda (elt) (eq? elt obj)))) */
+
+ SchemeAccess.Scheme define:  #'memq'
+  as: 
+       [ :obj :list |  ( list detect:
+           [ :elt | ((SchemeAccess.Scheme globalRef:  #'eq?')
+                    value: ( elt) value: ( obj)).]).].
+
+/* (define (memv obj list) (: list detect: (lambda (elt) (eqv? elt obj)))) */
+
+ SchemeAccess.Scheme define:  #'memv'
+  as: 
+       [ :obj :list |  ( list detect:
+           [ :elt | ((SchemeAccess.Scheme globalRef:  #'eqv?')
+                    value: ( elt) value: ( obj)).]).].
+
+/* (define (member obj list) (: list detect: (lambda (elt) (equal? elt obj)))) */
+
+ SchemeAccess.Scheme define:  #'member'
+  as: 
+       [ :obj :list |  ( list detect:
+           [ :elt | ((SchemeAccess.Scheme globalRef:  #'equal?')
+                    value: ( elt) value: ( obj)).]).].
+
+/* (define (assq obj alist) (: alist detect: (lambda (pair) (eq? obj (car pair))))) */
+
+ SchemeAccess.Scheme define:  #'assq'
+  as: 
+       [ :obj :alist |  ( alist detect:
+           [ :pair | ((SchemeAccess.Scheme globalRef:  #'eq?')
+                    value: ( obj) value: (((SchemeAccess.Scheme globalRef:  #'car')
+                    value: ( pair)))).]).].
+
+/* (define (assv obj alist) (: alist detect: (lambda (pair) (eqv? obj (car pair))))) */
+
+ SchemeAccess.Scheme define:  #'assv'
+  as: 
+       [ :obj :alist |  ( alist detect:
+           [ :pair | ((SchemeAccess.Scheme globalRef:  #'eqv?')
+                    value: ( obj) value: (((SchemeAccess.Scheme globalRef:  #'car')
+                    value: ( pair)))).]).].
+
+/* (define (assoc obj alist) (: alist detect: (lambda (pair) (equal? obj (car pair))))) */
+
+ SchemeAccess.Scheme define:  #'assoc'
+  as: 
+       [ :obj :alist |  ( alist detect:
+           [ :pair | ((SchemeAccess.Scheme globalRef:  #'equal?')
+                    value: ( obj) value: (((SchemeAccess.Scheme globalRef:  #'car')
+                    value: ( pair)))).]).].
+
+/* (define (rassq obj alist) (: alist detect: (lambda (pair) (eq? obj (cdr pair))))) */
+
+ SchemeAccess.Scheme define:  #'rassq'
+  as: 
+       [ :obj :alist |  ( alist detect:
+           [ :pair | ((SchemeAccess.Scheme globalRef:  #'eq?')
+                    value: ( obj) value: (((SchemeAccess.Scheme globalRef:  #'cdr')
+                    value: ( pair)))).]).].
+
+/* (define (symbol? obj) (and (: obj "isKindOf:" ($ "Symbol")) (not (: obj "isKindOf:" ($ "String"))))) */
+
+ SchemeAccess.Scheme define:  #'symbol?'
+  as: 
+       [ :obj |  (if ( ( obj isKindOf: Symbol))
+                then [((SchemeAccess.Scheme globalRef:  #'not')
+                    value: ( ( obj isKindOf: String)))]
+                else [ false]).].
+
+/* (define (symbol->string symbol) (: symbol "asSchemeString")) */
+
+ SchemeAccess.Scheme define:  #'symbol->string'
+  as: 
+       [ :symbol |  ( symbol asSchemeString).].
+
+/* (define (string->symbol string) (: (: (: string "asLowercase") "fromSchemeIdentifier") "asSymbol")) */
+
+ SchemeAccess.Scheme define:  #'string->symbol'
+  as: 
+       [ :string |  ( ( ( string asLowercase) fromSchemeIdentifier) asSymbol).].
+
+/* (define (char? obj) (: obj "isKindOf:" ($ "Character"))) */
+
+ SchemeAccess.Scheme define:  #'char?'
+  as: 
+       [ :obj |  ( obj isKindOf: Character).].
+
+/* (define (char=? c1 c2) (: c1 = c2)) */
+
+ SchemeAccess.Scheme define:  #'char=?'
+  as: 
+       [ :c1 :c2 |  ( c1 = c2).].
+
+/* (define (char<? c1 c2) (: c1 < c2)) */
+
+ SchemeAccess.Scheme define:  #'char<?'
+  as: 
+       [ :c1 :c2 |  ( c1 < c2).].
+
+/* (define (char>? c1 c2) (: c1 > c2)) */
+
+ SchemeAccess.Scheme define:  #'char>?'
+  as: 
+       [ :c1 :c2 |  ( c1 > c2).].
+
+/* (define (char>=? c1 c2) (: c1 >= c2)) */
+
+ SchemeAccess.Scheme define:  #'char>=?'
+  as: 
+       [ :c1 :c2 |  ( c1 >= c2).].
+
+/* (define (char<=? c1 c2) (: c1 <= c2)) */
+
+ SchemeAccess.Scheme define:  #'char<=?'
+  as: 
+       [ :c1 :c2 |  ( c1 <= c2).].
+
+/* (define (char-ci=? c1 c2) (: (: c1 "asLowercase") = (: c2 "asLowercase"))) */
+
+ SchemeAccess.Scheme define:  #'char-ci=?'
+  as: 
+       [ :c1 :c2 |  ( ( c1 asLowercase) = ( c2 asLowercase)).].
+
+/* (define (char-ci<? c1 c2) (: (: c1 "asLowercase") < (: c2 "asLowercase"))) */
+
+ SchemeAccess.Scheme define:  #'char-ci<?'
+  as: 
+       [ :c1 :c2 |  ( ( c1 asLowercase) < ( c2 asLowercase)).].
+
+/* (define (char-ci>? c1 c2) (: (: c1 "asLowercase") > (: c2 "asLowercase"))) */
+
+ SchemeAccess.Scheme define:  #'char-ci>?'
+  as: 
+       [ :c1 :c2 |  ( ( c1 asLowercase) > ( c2 asLowercase)).].
+
+/* (define (char-ci<=? c1 c2) (: (: c1 "asLowercase") <= (: c2 "asLowercase"))) */
+
+ SchemeAccess.Scheme define:  #'char-ci<=?'
+  as: 
+       [ :c1 :c2 |  ( ( c1 asLowercase) <= ( c2 asLowercase)).].
+
+/* (define (char-ci>=? c1 c2) (: (: c1 "asLowercase") >= (: c2 "asLowercase"))) */
+
+ SchemeAccess.Scheme define:  #'char-ci>=?'
+  as: 
+       [ :c1 :c2 |  ( ( c1 asLowercase) >= ( c2 asLowercase)).].
+
+/* (define (char-alphabetic? c) (or (char-upper-case? c) (char-lower-case? c))) */
+
+ SchemeAccess.Scheme define:  #'char-alphabetic?'
+  as: 
+       [ :c |  [ :temp174 | 
+                (if ( temp174)
+                    then [ temp174]
+                    else [((SchemeAccess.Scheme globalRef:  #'char-lower-case?')
+                        value: ( c))]).
+           ](((SchemeAccess.Scheme globalRef:  #'char-upper-case?')
+                    value: ( c))).].
+
+/* (define (char-numeric? c) (and (char>=? c #\0) (char<=? c #\9))) */
+
+ SchemeAccess.Scheme define:  #'char-numeric?'
+  as: 
+       [ :c |  (if (((SchemeAccess.Scheme globalRef:  #'char>=?')
+                    value: ( c) value: ( $0)))
+                then [((SchemeAccess.Scheme globalRef:  #'char<=?')
+                    value: ( c) value: ( $9))]
+                else [ false]).].
+
+/* (define (char-whitespace? c) (error "NYI char-whitespace?")) */
+
+ SchemeAccess.Scheme define:  #'char-whitespace?'
+  as: 
+       [ :c | ((SchemeAccess.Scheme globalRef:  #'error')
+                value: ( 'NYI char-whitespace?')).].
+
+/* (define (char-upper-case? c) (and (char>=? c #\A) (char<=? c #\Z))) */
+
+ SchemeAccess.Scheme define:  #'char-upper-case?'
+  as: 
+       [ :c |  (if (((SchemeAccess.Scheme globalRef:  #'char>=?')
+                    value: ( c) value: ( $A)))
+                then [((SchemeAccess.Scheme globalRef:  #'char<=?')
+                    value: ( c) value: ( $Z))]
+                else [ false]).].
+
+/* (define (char-lower-case? c) (and (char>=? c #\a) (char<=? c #\z))) */
+
+ SchemeAccess.Scheme define:  #'char-lower-case?'
+  as: 
+       [ :c |  (if (((SchemeAccess.Scheme globalRef:  #'char>=?')
+                    value: ( c) value: ( $a)))
+                then [((SchemeAccess.Scheme globalRef:  #'char<=?')
+                    value: ( c) value: ( $z))]
+                else [ false]).].
+
+/* (define (char->integer c) (: c "asNumber")) */
+
+ SchemeAccess.Scheme define:  #'char->integer'
+  as: 
+       [ :c |  ( c asNumber).].
+
+/* (define (integer->char n) (: n "asCharacter")) */
+
+ SchemeAccess.Scheme define:  #'integer->char'
+  as: 
+       [ :n |  ( n asCharacter).].
+
+/* (define (char-upcase c) (: c "asUppercase")) */
+
+ SchemeAccess.Scheme define:  #'char-upcase'
+  as: 
+       [ :c |  ( c asUppercase).].
+
+/* (define (char-downcase c) (: c "asLowercase")) */
+
+ SchemeAccess.Scheme define:  #'char-downcase'
+  as: 
+       [ :c |  ( c asLowercase).].
+
+/* (define (string? obj) (and (: obj "isKindOf:" ($ "String")) (not (: obj "isKindOf:" ($ "Symbol"))))) */
+
+ SchemeAccess.Scheme define:  #'string?'
+  as: 
+       [ :obj |  (if ( ( obj isKindOf: String))
+                then [((SchemeAccess.Scheme globalRef:  #'not')
+                    value: ( ( obj isKindOf: Symbol)))]
+                else [ false]).].
+
+/* (define (make-string k char) (let ((str (: ($ "String") new: k)) (fill (if (null? char) #\space char))) (let loop ((count k)) (if (<= count 0) str (begin (: str "[" count "] := " fill) (loop (- count 1))))))) */
+
+ SchemeAccess.Scheme define:  #'make-string'
+  as: 
+       [ :k :char |  [ :str :fill | 
+               
+                [ | loop | := 
+                   [ :count | 
+                    (if (((SchemeAccess.Scheme globalRef:  #'<=')
+                            value: ( count) value: ( 0)))
+                        then [ str]
+                        else [ [
+                          ( str [ count ] :=  fill).
+                         (loop value: (((SchemeAccess.Scheme globalRef:  #'-')
+                              value: ( count) value: ( 1)))).
+                        ] value.])
+               ].
+               loop valueWithArguments: {
+                    k. } ] value.
+           ]( ( String new: k) , (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                        value: ( char)))
+                    then [ $ ]
+                    else [ char])).].
+
+/* (define (string-length str) (: str size)) */
+
+ SchemeAccess.Scheme define:  #'string-length'
+  as: 
+       [ :str |  ( str size).].
+
+/* (define (string-ref str k) (: str "[" (+ 1 k) "]")) */
+
+ SchemeAccess.Scheme define:  #'string-ref'
+  as: 
+       [ :str :k |  ( str [((SchemeAccess.Scheme globalRef:  #'+')
+                value: ( 1) value: ( k)) ]).].
+
+/* (define (string-set! str k char) (: str "[" (+ 1 k) "] := " char)) */
+
+ SchemeAccess.Scheme define:  #'string-set!'
+  as: 
+       [ :str :k :char |  ( str [((SchemeAccess.Scheme globalRef:  #'+')
+                value: ( 1) value: ( k)) ] :=  char).].
+
+/* (define (string=? s1 s2) (: s1 = s2)) */
+
+ SchemeAccess.Scheme define:  #'string=?'
+  as: 
+       [ :s1 :s2 |  ( s1 = s2).].
+
+/* (define (string<? s1 s2) (: s1 < s2)) */
+
+ SchemeAccess.Scheme define:  #'string<?'
+  as: 
+       [ :s1 :s2 |  ( s1 < s2).].
+
+/* (define (string>? s1 s2) (: s1 > s2)) */
+
+ SchemeAccess.Scheme define:  #'string>?'
+  as: 
+       [ :s1 :s2 |  ( s1 > s2).].
+
+/* (define (string>=? s1 s2) (: s1 >= s2)) */
+
+ SchemeAccess.Scheme define:  #'string>=?'
+  as: 
+       [ :s1 :s2 |  ( s1 >= s2).].
+
+/* (define (string<=? s1 s2) (: s1 <= s2)) */
+
+ SchemeAccess.Scheme define:  #'string<=?'
+  as: 
+       [ :s1 :s2 |  ( s1 <= s2).].
+
+/* (define (string-ci=? s1 s2) (: (: s1 "asLowercase") = (: s2 "asLowercase"))) */
+
+ SchemeAccess.Scheme define:  #'string-ci=?'
+  as: 
+       [ :s1 :s2 |  ( ( s1 asLowercase) = ( s2 asLowercase)).].
+
+/* (define (string-ci<? s1 s2) (: (: s1 "asLowercase") < (: s2 "asLowercase"))) */
+
+ SchemeAccess.Scheme define:  #'string-ci<?'
+  as: 
+       [ :s1 :s2 |  ( ( s1 asLowercase) < ( s2 asLowercase)).].
+
+/* (define (string-ci>? s1 s2) (: (: s1 "asLowercase") > (: s2 "asLowercase"))) */
+
+ SchemeAccess.Scheme define:  #'string-ci>?'
+  as: 
+       [ :s1 :s2 |  ( ( s1 asLowercase) > ( s2 asLowercase)).].
+
+/* (define (string-ci<=? s1 s2) (: (: s1 "asLowercase") <= (: s2 "asLowercase"))) */
+
+ SchemeAccess.Scheme define:  #'string-ci<=?'
+  as: 
+       [ :s1 :s2 |  ( ( s1 asLowercase) <= ( s2 asLowercase)).].
+
+/* (define (string-ci>=? s1 s2) (: (: s1 "asLowercase") >= (: s2 "asLowercase"))) */
+
+ SchemeAccess.Scheme define:  #'string-ci>=?'
+  as: 
+       [ :s1 :s2 |  ( ( s1 asLowercase) >= ( s2 asLowercase)).].
+
+/* (define (substring str start end) (if (and (<= 0 start) (<= start end) (<= end (string-length str))) (: str "[" (+ start 1) ":" end "]") (error "substring: indexing error"))) */
+
+ SchemeAccess.Scheme define:  #'substring'
+  as: 
+       [ :str :start :end |  (if ( (if (((SchemeAccess.Scheme globalRef:  #'<=')
+                        value: ( 0) value: ( start)))
+                    then [ (if (((SchemeAccess.Scheme globalRef:  #'<=')
+                            value: ( start) value: ( end)))
+                        then [((SchemeAccess.Scheme globalRef:  #'<=')
+                            value: ( end) value: (((SchemeAccess.Scheme globalRef:  #'string-length')
+                            value: ( str))))]
+                        else [ false])]
+                    else [ false]))
+                then [ ( str [((SchemeAccess.Scheme globalRef:  #'+')
+                    value: ( start) value: ( 1)) : end ])]
+                else [((SchemeAccess.Scheme globalRef:  #'error')
+                    value: ( 'substring: indexing error'))]).].
+
+/* (define (string-append str . others) (reduce (lambda (s1 s2) (: s1 "," s2)) str others)) */
+
+ SchemeAccess.Scheme define:  #'string-append'
+  as: 
+       [ :str | 
+           | others | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| others add: (thisContext.contextArgAt(idx))].
+           others := (others asPair).
+           ((SchemeAccess.Scheme globalRef:  #'reduce')
+                value: (
+           [ :s1 :s2 |  ( s1 , s2).]) value: ( str) value: ( others)).].
+
+/* (define (string->list str) (: (: str "asList") "asPair")) */
+
+ SchemeAccess.Scheme define:  #'string->list'
+  as: 
+       [ :str |  ( ( str asList) asPair).].
+
+/* (define (list->string list) (let ((str (: ($ "String") new))) (: list collect: (lambda (char) (: str add: char))) str)) */
+
+ SchemeAccess.Scheme define:  #'list->string'
+  as: 
+       [ :list |  [ :str | 
+                [
+                  ( list collect:
+                 [ :char |  ( str add: char).]).
+                  str.
+                ] value..
+           ]( ( String new)).].
+
+/* (define (string-copy str) (: str copy)) */
+
+ SchemeAccess.Scheme define:  #'string-copy'
+  as: 
+       [ :str |  ( str copy).].
+
+/* (define (string-fill! str char) (let loop ((idx (- (string-length str) 1))) (if (< idx 0) str (begin (string-set! str idx char) (loop (- idx 1)))))) */
+
+ SchemeAccess.Scheme define:  #'string-fill!'
+  as: 
+       [ :str :char | 
+            [ | loop | := 
+               [ :idx | 
+                (if (((SchemeAccess.Scheme globalRef:  #'<')
+                        value: ( idx) value: ( 0)))
+                    then [ str]
+                    else [ [
+                     ((SchemeAccess.Scheme globalRef:  #'string-set!')
+                          value: ( str) value: ( idx) value: ( char)).
+                     (loop value: (((SchemeAccess.Scheme globalRef:  #'-')
+                          value: ( idx) value: ( 1)))).
+                    ] value.])
+           ].
+           loop valueWithArguments: {
+               ((SchemeAccess.Scheme globalRef:  #'-')
+                    value: (((SchemeAccess.Scheme globalRef:  #'string-length')
+                    value: ( str))) value: ( 1)). } ] value.].
+
+/* (define (vector? obj) (: obj "isKindOf:" ($ "List"))) */
+
+ SchemeAccess.Scheme define:  #'vector?'
+  as: 
+       [ :obj |  ( obj isKindOf: List).].
+
+/* (define (make-vector k obj) (let ((vec (: ($ "List") new))) (let loop ((count k)) (if (<= count 0) vec (begin (: vec add: obj) (loop (- count 1))))))) */
+
+ SchemeAccess.Scheme define:  #'make-vector'
+  as: 
+       [ :k :obj |  [ :vec | 
+               
+                [ | loop | := 
+                   [ :count | 
+                    (if (((SchemeAccess.Scheme globalRef:  #'<=')
+                            value: ( count) value: ( 0)))
+                        then [ vec]
+                        else [ [
+                          ( vec add: obj).
+                         (loop value: (((SchemeAccess.Scheme globalRef:  #'-')
+                              value: ( count) value: ( 1)))).
+                        ] value.])
+               ].
+               loop valueWithArguments: {
+                    k. } ] value.
+           ]( ( List new)).].
+
+/* (define (vector-length vec) (: vec size)) */
+
+ SchemeAccess.Scheme define:  #'vector-length'
+  as: 
+       [ :vec |  ( vec size).].
+
+/* (define (vector-ref vec k) (: vec "[" (+ 1 k) "]")) */
+
+ SchemeAccess.Scheme define:  #'vector-ref'
+  as: 
+       [ :vec :k |  ( vec [((SchemeAccess.Scheme globalRef:  #'+')
+                value: ( 1) value: ( k)) ]).].
+
+/* (define (vector-set! vec k obj) (: vec "[" (+ 1 k) "] := " obj)) */
+
+ SchemeAccess.Scheme define:  #'vector-set!'
+  as: 
+       [ :vec :k :obj |  ( vec [((SchemeAccess.Scheme globalRef:  #'+')
+                value: ( 1) value: ( k)) ] :=  obj).].
+
+/* (define (vector->list vec) (: (: vec collect: (lambda (elt) elt)) "asPair")) */
+
+ SchemeAccess.Scheme define:  #'vector->list'
+  as: 
+       [ :vec |  ( ( vec collect:
+           [ :elt |  elt.]) asPair).].
+
+/* (define (list->vector list) (: list "asList")) */
+
+ SchemeAccess.Scheme define:  #'list->vector'
+  as: 
+       [ :list |  ( list asList).].
+
+/* (define (vector-fill! vec obj) (let loop ((idx (- (vector-length vec) 1))) (if (< idx 0) vec (begin (vector-set! vec idx obj) (loop (- idx 1)))))) */
+
+ SchemeAccess.Scheme define:  #'vector-fill!'
+  as: 
+       [ :vec :obj | 
+            [ | loop | := 
+               [ :idx | 
+                (if (((SchemeAccess.Scheme globalRef:  #'<')
+                        value: ( idx) value: ( 0)))
+                    then [ vec]
+                    else [ [
+                     ((SchemeAccess.Scheme globalRef:  #'vector-set!')
+                          value: ( vec) value: ( idx) value: ( obj)).
+                     (loop value: (((SchemeAccess.Scheme globalRef:  #'-')
+                          value: ( idx) value: ( 1)))).
+                    ] value.])
+           ].
+           loop valueWithArguments: {
+               ((SchemeAccess.Scheme globalRef:  #'-')
+                    value: (((SchemeAccess.Scheme globalRef:  #'vector-length')
+                    value: ( vec))) value: ( 1)). } ] value.].
+
+/* (define (procedure? obj) (: obj "isKindOf:" ($ "Block"))) */
+
+ SchemeAccess.Scheme define:  #'procedure?'
+  as: 
+       [ :obj |  ( obj isKindOf: Block).].
+
+/* (define (apply proc . args) (: proc "valueWithArguments:" (: args "asList"))) */
+
+ SchemeAccess.Scheme define:  #'apply'
+  as: 
+       [ :proc | 
+           | args | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| args add: (thisContext.contextArgAt(idx))].
+           args := (args asPair).
+            ( proc valueWithArguments: ( args asList)).].
+
+/* (define (map fn . list) (cond ((null? (car list)) '()) ((pair? (car list)) (cons (apply fn (: list collect: car)) (apply map fn (: list collect: cdr)))) (else (apply fn list)))) */
+
+ SchemeAccess.Scheme define:  #'map'
+  as: 
+       [ :fn | 
+           | list | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| list add: (thisContext.contextArgAt(idx))].
+           list := (list asPair).
+            (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                    value: (((SchemeAccess.Scheme globalRef:  #'car')
+                    value: ( list)))))
+                then [ nil]
+                else [ (if (((SchemeAccess.Scheme globalRef:  #'pair?')
+                        value: (((SchemeAccess.Scheme globalRef:  #'car')
+                        value: ( list)))))
+                    then [((SchemeAccess.Scheme globalRef:  #'cons')
+                        value: (((SchemeAccess.Scheme globalRef:  #'apply')
+                        value: ( fn) value: ( ( list collect: (SchemeAccess.Scheme globalRef:  #'car')
+                       )))) value: (((SchemeAccess.Scheme globalRef:  #'apply')
+                        value: ( (SchemeAccess.Scheme globalRef:  #'map')
+                       ) value: ( fn) value: ( ( list collect: (SchemeAccess.Scheme globalRef:  #'cdr')
+                       )))))]
+                    else [((SchemeAccess.Scheme globalRef:  #'apply')
+                        value: ( fn) value: ( list))])]).].
+
+/* (define (any pred list) (cond ((null? list) #f) ((pred (car list)) (car list)) (else (any pred (cdr list))))) */
+
+ SchemeAccess.Scheme define:  #'any'
+  as: 
+       [ :pred :list |  (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                    value: ( list)))
+                then [ false]
+                else [ (if ((pred value: (((SchemeAccess.Scheme globalRef:  #'car')
+                        value: ( list)))))
+                    then [((SchemeAccess.Scheme globalRef:  #'car')
+                        value: ( list))]
+                    else [((SchemeAccess.Scheme globalRef:  #'any')
+                        value: ( pred) value: (((SchemeAccess.Scheme globalRef:  #'cdr')
+                        value: ( list))))])]).].
+
+/* (define (for-each proc first . rest) (if (null? rest) (: list do: proc) (let loop ((lists (cons first rest))) (if (not (any null? lists)) (begin (apply proc (: list collect: car)) (loop proc (: list collect: cdr))))))) */
+
+ SchemeAccess.Scheme define:  #'for-each'
+  as: 
+       [ :proc :first | 
+           | rest | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| rest add: (thisContext.contextArgAt(idx))].
+           rest := (rest asPair).
+            (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                    value: ( rest)))
+                then [ ( (SchemeAccess.Scheme globalRef:  #'list')
+                    do: proc)]
+                else [
+                [ | loop | := 
+                   [ :lists | 
+                    (if (((SchemeAccess.Scheme globalRef:  #'not')
+                            value: (((SchemeAccess.Scheme globalRef:  #'any')
+                            value: ( (SchemeAccess.Scheme globalRef:  #'null?')
+                           ) value: ( lists)))))
+                        then [ [
+                         ((SchemeAccess.Scheme globalRef:  #'apply')
+                              value: ( proc) value: ( ( (SchemeAccess.Scheme globalRef:  #'list')
+                              collect: (SchemeAccess.Scheme globalRef:  #'car')
+                             ))).
+                         (loop value: ( proc) value: ( ( (SchemeAccess.Scheme globalRef:  #'list')
+                              collect: (SchemeAccess.Scheme globalRef:  #'cdr')
+                             ))).
+                        ] value.])
+               ].
+               loop valueWithArguments: {
+                   ((SchemeAccess.Scheme globalRef:  #'cons')
+                        value: ( first) value: ( rest)). } ] value]).].
+
+/* (define (make-promise thunk) (let ((forced? #f) (result #f)) (lambda () (if forced? result (let ((whatever (thunk))) (if forced? result (begin (set! result whatever) (set! forced? #t) (set! thunk #f) result))))))) */
+
+ SchemeAccess.Scheme define:  #'make-promise'
+  as: 
+       [ :thunk |  [ :forcedX3F :result | 
+               
+               [ (if ( forcedX3F)
+                        then [ result]
+                        else [ [ :whatever | 
+                            (if ( forcedX3F)
+                                then [ result]
+                                else [ [
+                                 (result :=  whatever).
+                                 (forcedX3F :=  true).
+                                 (thunk :=  false).
+                                  result.
+                                ] value.]).
+                       ]((thunk value))]).].
+           ]( false , false).].
+
+/* (define (force promise) (promise)) */
+
+ SchemeAccess.Scheme define:  #'force'
+  as: 
+       [ :promise | (promise value).].
+
+/* (define (call-with-values producer consumer) (: consumer "valueWithArguments:" (producer))) */
+
+ SchemeAccess.Scheme define:  #'call-with-values'
+  as: 
+       [ :producer :consumer |  ( consumer valueWithArguments:(producer value)).].
+
+/* (define (dynamic-wind before thunk after) (: (lambda () (before) (thunk)) ensure: after)) */
+
+ SchemeAccess.Scheme define:  #'dynamic-wind'
+  as: 
+       [ :before :thunk :after |  (
+           [ [
+                 (before value).
+                 (thunk value).
+                ] value..] ensure: after).].
+
+/* (define (call-with-input-file file-name-string proc) (let ((inport (: ($ "FileStream") "openOn:" file-name-string "withPermissions:" "r"))) (: (lambda () (proc inport)) ensure: (lambda () (: inport close))))) */
+
+ SchemeAccess.Scheme define:  #'call-with-input-file'
+  as: 
+       [ :fileX2DnameX2Dstring :proc |  [ :inport | 
+                (
+               [(proc value: ( inport)).] ensure:
+               [ ( inport close).]).
+           ]( ( FileStream openOn: fileX2DnameX2Dstring withPermissions: 'r')).].
+
+/* (define (call-with-output-file file-name-string proc) (let ((outport (: ($ "FileStream") "openOn:" file-name-string "withPermissions:" "w"))) (: (lambda () (proc outport)) ensure: (lambda () (: outport close))))) */
+
+ SchemeAccess.Scheme define:  #'call-with-output-file'
+  as: 
+       [ :fileX2DnameX2Dstring :proc |  [ :outport | 
+                (
+               [(proc value: ( outport)).] ensure:
+               [ ( outport close).]).
+           ]( ( FileStream openOn: fileX2DnameX2Dstring withPermissions: 'w')).].
+
+/* (define (input-port? obj) (and (: obj "isKindOf:" ($ "Stream")) (not (or (: obj "isKindOf:" ($ "StdErrStream")) (: obj "isKindOf:" ($ "StdOutStream")) (: obj "isKindOf:" ($ "StdDebugStream")))))) */
+
+ SchemeAccess.Scheme define:  #'input-port?'
+  as: 
+       [ :obj |  (if ( ( obj isKindOf: Stream))
+                then [((SchemeAccess.Scheme globalRef:  #'not')
+                    value: ( [ :temp175 | 
+                    (if ( temp175)
+                        then [ temp175]
+                        else [ [ :temp176 | 
+                            (if ( temp176)
+                                then [ temp176]
+                                else [ ( obj isKindOf: StdDebugStream)]).
+                       ]( ( obj isKindOf: StdOutStream))]).
+               ]( ( obj isKindOf: StdErrStream))))]
+                else [ false]).].
+
+/* (define (output-port? obj) (and (: obj "isKindOf:" ($ "Stream")) (not (: obj "isKindOf:" ($ "StdInStream"))))) */
+
+ SchemeAccess.Scheme define:  #'output-port?'
+  as: 
+       [ :obj |  (if ( ( obj isKindOf: Stream))
+                then [((SchemeAccess.Scheme globalRef:  #'not')
+                    value: ( ( obj isKindOf: StdInStream)))]
+                else [ false]).].
+
+/* (define (port? obj) (: obj "isKindOf:" ($ "Stream"))) */
+
+ SchemeAccess.Scheme define:  #'port?'
+  as: 
+       [ :obj |  ( obj isKindOf: Stream).].
+
+/* (dynamic-define %*current-input-port*% ($ "stdin")) */
+
+ SchemeAccess.Scheme dynamicDefine: #X25X2AcurrentX2DinputX2DportX2AX25
+  as:  stdin.
+
+/* (dynamic-define %*current-output-port*% ($ "stdout")) */
+
+ SchemeAccess.Scheme dynamicDefine: #X25X2AcurrentX2DoutputX2DportX2AX25
+  as:  stdout.
+
+/* (define (current-input-port) (dynamic-ref-with-default %*current-input-port*% (lambda () ($ "stdin")))) */
+
+ SchemeAccess.Scheme define:  #'current-input-port'
+  as: 
+       [(SchemeAccess.Scheme dynamicRef: #X25X2AcurrentX2DinputX2DportX2AX25 withDefault: 
+           [ stdin.]).].
+
+/* (define (current-output-port) (dynamic-ref-with-default %*current-output-port*% (lambda () ($ "stdout")))) */
+
+ SchemeAccess.Scheme define:  #'current-output-port'
+  as: 
+       [(SchemeAccess.Scheme dynamicRef: #X25X2AcurrentX2DoutputX2DportX2AX25 withDefault: 
+           [ stdout.]).].
+
+/* (define (with-input-from-file file-name-string thunk) (dynamic-let ((%*current-input-port*% (open-input-file file-name-string))) (: thunk ensure: (: (dynamic-ref %*current-input-port*%) close)))) */
+
+ SchemeAccess.Scheme define:  #'with-input-from-file'
+  as: 
+       [ :fileX2DnameX2Dstring :thunk |  [
+             SchemeAccess.Scheme dynamicPush: #X25X2AcurrentX2DinputX2DportX2AX25
+                        as: ((SchemeAccess.Scheme globalRef:  #'open-input-file')
+                  value: ( fileX2DnameX2Dstring)).
+              ( thunk ensure: ((SchemeAccess.Scheme dynamicRef: #X25X2AcurrentX2DinputX2DportX2AX25) close)).
+           ] ensure: [
+             SchemeAccess.Scheme dynamicPop: #X25X2AcurrentX2DinputX2DportX2AX25.].
+.].
+
+/* (define (with-output-to-file file-name-string thunk) (dynamic-let ((%*current-output-port*% (open-output-file file-name-string))) (: thunk ensure: (: (dynamic-ref %*current-output-port*%) close)))) */
+
+ SchemeAccess.Scheme define:  #'with-output-to-file'
+  as: 
+       [ :fileX2DnameX2Dstring :thunk |  [
+             SchemeAccess.Scheme dynamicPush: #X25X2AcurrentX2DoutputX2DportX2AX25
+                        as: ((SchemeAccess.Scheme globalRef:  #'open-output-file')
+                  value: ( fileX2DnameX2Dstring)).
+              ( thunk ensure: ((SchemeAccess.Scheme dynamicRef: #X25X2AcurrentX2DoutputX2DportX2AX25) close)).
+           ] ensure: [
+             SchemeAccess.Scheme dynamicPop: #X25X2AcurrentX2DoutputX2DportX2AX25.].
+.].
+
+/* (define (open-input-file file-name-string) (: ($ "FileStream") "openOn:" file-name-string "withPermissions:" "r")) */
+
+ SchemeAccess.Scheme define:  #'open-input-file'
+  as: 
+       [ :fileX2DnameX2Dstring |  ( FileStream openOn: fileX2DnameX2Dstring withPermissions: 'r').].
+
+/* (define (open-output-file file-name-string) (: ($ "FileStream") "openOn:" file-name-string "withPermissions:" "w")) */
+
+ SchemeAccess.Scheme define:  #'open-output-file'
+  as: 
+       [ :fileX2DnameX2Dstring |  ( FileStream openOn: fileX2DnameX2Dstring withPermissions: 'w').].
+
+/* (define (close-input-port port) (: port close)) */
+
+ SchemeAccess.Scheme define:  #'close-input-port'
+  as: 
+       [ :port |  ( port close).].
+
+/* (define (close-output-port port) (: port close)) */
+
+ SchemeAccess.Scheme define:  #'close-output-port'
+  as: 
+       [ :port |  ( port close).].
+
+/* (define the-eof-object '"EOF") */
+
+ SchemeAccess.Scheme define:  #'the-eof-object'
+  as:  'EOF'.
+
+/* (define (read-char port) (let ((inport (if (null? port) (current-input-port) (car port)))) (if (: inport "atEnd") eof-object (: inport next)))) */
+
+ SchemeAccess.Scheme define:  #'read-char'
+  as: 
+       [ :port |  [ :inport | 
+                (if ( ( inport atEnd))
+                    then [ (SchemeAccess.Scheme globalRef:  #'eof-object')
+                       ]
+                    else [ ( inport next)]).
+           ]( (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                        value: ( port)))
+                    then [((SchemeAccess.Scheme globalRef:  #'current-input-port')
+                        value)]
+                    else [((SchemeAccess.Scheme globalRef:  #'car')
+                        value: ( port))])).].
+
+/* (define (peek-char port) (let ((inport (if (null? port) (current-input-port) (car port)))) (if (: inport "atEnd") eof-object (: inport "peekNext")))) */
+
+ SchemeAccess.Scheme define:  #'peek-char'
+  as: 
+       [ :port |  [ :inport | 
+                (if ( ( inport atEnd))
+                    then [ (SchemeAccess.Scheme globalRef:  #'eof-object')
+                       ]
+                    else [ ( inport peekNext)]).
+           ]( (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                        value: ( port)))
+                    then [((SchemeAccess.Scheme globalRef:  #'current-input-port')
+                        value)]
+                    else [((SchemeAccess.Scheme globalRef:  #'car')
+                        value: ( port))])).].
+
+/* (define (eof-object? obj) (: obj == the-eof-object)) */
+
+ SchemeAccess.Scheme define:  #'eof-object?'
+  as: 
+       [ :obj |  ( obj == (SchemeAccess.Scheme globalRef:  #'the-eof-object')
+               ).].
+
+/* (define (char-ready? port) #t) */
+
+ SchemeAccess.Scheme define:  #'char-ready?'
+  as: 
+       [ :port |  true.].
+
+/* (define (write obj port) (: (if (null? port) (current-output-port) port) "<<" (: obj "asSchemeObjString"))) */
+
+ SchemeAccess.Scheme define:  #'write'
+  as: 
+       [ :obj :port |  ( (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                    value: ( port)))
+                then [((SchemeAccess.Scheme globalRef:  #'current-output-port')
+                    value)]
+                else [ port]) << ( obj asSchemeObjString)).].
+
+/* (define (display obj port) (: (if (null? port) (current-output-port) port) "<<" (: obj "asSchemeString"))) */
+
+ SchemeAccess.Scheme define:  #'display'
+  as: 
+       [ :obj :port |  ( (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                    value: ( port)))
+                then [((SchemeAccess.Scheme globalRef:  #'current-output-port')
+                    value)]
+                else [ port]) << ( obj asSchemeString)).].
+
+/* (define (newline port) (: (if (null? port) (current-output-port) port) "cr")) */
+
+ SchemeAccess.Scheme define:  #'newline'
+  as: 
+       [ :port |  ( (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                    value: ( port)))
+                then [((SchemeAccess.Scheme globalRef:  #'current-output-port')
+                    value)]
+                else [ port]) cr).].
+
+/* (define (write-char char port) (write (case char ((#\space) "#\\space") ((#\newline) "#\\newline") (else char)) (if (null? port) (current-output-port) port))) */
+
+ SchemeAccess.Scheme define:  #'write-char'
+  as: 
+       [ :char :port | ((SchemeAccess.Scheme globalRef:  #'write')
+                value: ( [ :key177 | 
+                (if (((SchemeAccess.Scheme globalRef:  #'memv')
+                        value: ( key177) value: ( ({ $ . } asPair))))
+                    then [ '#\space']
+                    else [ [ :key178 | 
+                        (if (((SchemeAccess.Scheme globalRef:  #'memv')
+                                value: ( key178) value: ( ({ $
+. } asPair))))
+                            then [ '#\newline']
+                            else [ [
+                              key178.
+                              char.
+                            ] value.]).
+                   ]( key177)]).
+           ]( char)) value: ( (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                    value: ( port)))
+                then [((SchemeAccess.Scheme globalRef:  #'current-output-port')
+                    value)]
+                else [ port]))).].
+
+/* (define (load file-name-string) (with-input-from-file file-name-string (lambda (in) (let loop ((form (read in)) (final-value file-name-string)) (if (eof-object? form) final-value (loop (read in) (eval form (interaction-environment)))))))) */
+
+ SchemeAccess.Scheme define:  #'load'
+  as: 
+       [ :fileX2DnameX2Dstring | ((SchemeAccess.Scheme globalRef:  #'with-input-from-file')
+                value: ( fileX2DnameX2Dstring) value: (
+           [ :in | 
+                [ | loop | := 
+                   [ :form :finalX2Dvalue | 
+                    (if (((SchemeAccess.Scheme globalRef:  #'eof-object?')
+                            value: ( form)))
+                        then [ finalX2Dvalue]
+                        else [(loop value: (((SchemeAccess.Scheme globalRef:  #'read')
+                            value: ( in))) value: (((SchemeAccess.Scheme globalRef:  #'eval')
+                            value: ( form) value: (((SchemeAccess.Scheme globalRef:  #'interaction-environment')
+                            value)))))])
+               ].
+               loop valueWithArguments: {
+                   ((SchemeAccess.Scheme globalRef:  #'read')
+                        value: ( in)). 
+                    fileX2DnameX2Dstring. } ] value.])).].
+
+/* (define gensym (let ((counter 0)) (lambda optional-str-or-sym (let ((string-or-symbol (if (null? optional-str-or-sym) "g" (cadr optional-str-or-sym)))) (set! counter (+ counter 1)) (string->symbol (string-append (if (symbol? string-or-symbol) (symbol->string string-or-symbol) string-or-symbol) (number->string counter))))))) */
+
+ SchemeAccess.Scheme define:  #'gensym'
+  as:  [ :counter | 
+           
+           [
+               | optionalX2DstrX2DorX2Dsym | := List new.
+                 thisBlock.arity+1 to: thisContext.contextArity do: 
+                     [:idx| optionalX2DstrX2DorX2Dsym add: (thisContext.contextArgAt(idx))].
+               optionalX2DstrX2DorX2Dsym := (optionalX2DstrX2DorX2Dsym asPair).
+                [ :stringX2DorX2Dsymbol | 
+                    [
+                     (counter := ((SchemeAccess.Scheme globalRef:  #'+')
+                          value: ( counter) value: ( 1))).
+                     ((SchemeAccess.Scheme globalRef:  #'string->symbol')
+                          value: (((SchemeAccess.Scheme globalRef:  #'string-append')
+                          value: ( (if (((SchemeAccess.Scheme globalRef:  #'symbol?')
+                              value: ( stringX2DorX2Dsymbol)))
+                          then [((SchemeAccess.Scheme globalRef:  #'symbol->string')
+                              value: ( stringX2DorX2Dsymbol))]
+                          else [ stringX2DorX2Dsymbol])) value: (((SchemeAccess.Scheme globalRef:  #'number->string')
+                          value: ( counter)))))).
+                    ] value..
+               ]( (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                            value: ( optionalX2DstrX2DorX2Dsym)))
+                        then [ 'g']
+                        else [((SchemeAccess.Scheme globalRef:  #'cadr')
+                            value: ( optionalX2DstrX2DorX2Dsym))])).].
+       ]( 0).
+
+]
+"--- E O F ---"

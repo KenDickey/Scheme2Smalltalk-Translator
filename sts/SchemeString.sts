@@ -1,0 +1,188 @@
+"" FILE: SchemeString.sts
+"" IMPLEMENTS: asSchemeString
+"" AUTHOR: Ken Dickey
+"" DATE: 28 November 2001
+
+"" COPYRIGHT (c) 2001, 2002 by Kenneth A Dickey
+"" This software may be used for any purpose but
+"" without warrenty or liability of any kind
+"" as long as this notice remains in tact.
+
+
+"" display <-> asSchemeString
+"" write   <-> asSchemeObjString
+
+"default"
+Method behavior: Object [
+asSchemeString
+	^self asString
+]
+
+Method behavior: Object [
+asSchemeObjString
+	^self asSchemeString
+]
+
+
+Method behavior: Boolean [
+asSchemeString
+	^(if (self == false) then '#f' else '#t')
+]
+
+Method behavior: Character [
+asSchemeObjString
+	if (self = (0x20 asCharacter))
+	[^'#\space']
+	else if (self = (0x0d asCharacter))
+	[^'#\newline']
+	else if (self = (0x09 asCharacter))
+	[^'#\tab']
+	else
+	^('#\' , (self asString))
+]
+
+Method behavior: Block [
+asSchemeString
+	^(String new << '#<procedure>') "FIXME: gid"
+]
+
+Method behavior: Stream [
+asSchemeString
+	^(String new << '#<port>') "FIXME: input, output, inout"
+]
+
+
+"A SmallScript List is Scheme Vector"
+"FIXME: ((Array new) isKindOf: Array) --> false !!! "
+
+Method behavior: List [
+asSchemeString
+	| str | := String new << '#('.
+	| firstTime | := true.
+	self do: [:elt| 
+		if (firstTime)
+		  [str := str , (elt asSchemeString).
+		   firstTime := false.]
+		else
+		  [str := str , ' ', (elt asSchemeString)].].
+	^(str , ')')
+]
+
+Method behavior: List [
+asSchemeObjString
+	| str | := String new << '#('.
+	| firstTime | := true.
+	self do: [:elt| 
+		if (firstTime)
+		  [str := str , (elt asSchemeObjString).
+		   firstTime := false.]
+		else
+		  [str := str , ' ', (elt asSchemeObjString)].].
+	^(str , ')')
+]
+
+
+Method behavior: String [
+asSchemeObjString
+	| result | := String new << '"'.
+	self do: [:c |
+		  "slashify"
+		  if ((c == $\) or (c == $"))
+		  then [result := (result , $\)].
+		  result := (result , c). 
+                 ].
+	^(result , $")
+]
+
+Method behavior: String [
+fromSchemeIdentifier "scheme->smallscript"
+	| result | := String new.
+	self do: [:c |
+		  "byteStuff $X"
+		  if (c == $X)
+		  then [result := (result , c , c)]
+		  else if ('!$%&*+-./:<=>?@^_~'
+			   detect: [:char| char = c] 
+                           ifNone: [false])
+		  then [result := (result , $X ,
+                                  ((c asHexString)[3:4]))]
+		  else [result := (result , c)]. 
+                 ].
+	^result
+]
+
+Method behavior: Character [
+isHexChar
+       ^((($0 <= self) and (self <= $9)) or
+	 (($A <= self) and (self <= $F)) or
+	 (($a <= self) and (self <= $f)))
+]
+
+Method behavior: String [
+toSchemeIdentifier "smallscript->scheme"
+	| result | := String new.
+	| len | := self size.
+        | index | := 1.
+	"if char is $X and next char != $X
+         then next 2 chars should make a hex number" 
+	[index <= len]
+	    whileTrue: [
+		  | c | := self[index].
+		  index :+= 1.
+		  if (((c == $X) not) or ((index + 1) > len))
+		  then [result := result , c]
+		  else [| c2 | := self[index].
+        	        | c3 | := self[index + 1].
+			if ((c2 isHexChar) and (c3 isHexChar))
+			[index :+= 2.
+                	 result := result , ((('0x' , c2 , c3) asNumber) asCharacter).
+               		 ] 
+                	else [result := result , c].
+	           ].
+	    ].
+	^result
+]
+
+
+Method behavior: Symbol [
+asSchemeString
+	^((self asString) toSchemeIdentifier)
+]
+
+Method behavior: Symbol [
+asSchemeObjString
+	^((self asString) toSchemeIdentifier)
+]
+
+
+"FIXME: objects should print 'slots' via DESCRIBE"
+
+
+Class ref-name: StdOutStream {
+
+	Method [
+		nextPutAll: aString
+			self << aString
+	]
+
+	Method [
+		nextPut: aChar
+			self << aChar asString
+	]
+
+	Method [
+		space
+			self << ' '
+	]
+
+	Method [
+		newline
+			self cr
+	]
+}
+
+[
+stdout << 'loaded file: SchemeString.sts'.
+stdout cr.
+]
+		"  ---   E O F   ---  "

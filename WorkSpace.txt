@@ -1,0 +1,61 @@
+homeDir := '/usr/local/src/Squeak/Squeak-3.2/'.
+
+"Make browser sort catagories"
+(FileStream fileNamed: (homeDir , 'reSortSystemCategories.st')) fileIn.
+
+"get changes"
+(FileStream fileNamed: (homeDir , 'BCDebuggerStepFix-ajh.cs')) fileIn.
+(FileStream fileNamed: (homeDir , 'BCDebugSelectionFix-ajh.1.cs')) fileIn.
+(FileStream fileNamed: (homeDir , 'as#Fix-ajh.1.cs')) fileIn.
+(FileStream fileNamed: (homeDir , 'MinorBCFixes-ajh.cs')) fileIn.
+(FileStream fileNamed: (homeDir , 'SmallScheme-KenD.2.cs')) fileIn.
+(FileStream fileNamed: (homeDir , 'SmallScheme-misc-KenD.1.cs')) fileIn.
+
+
+"old cruft"
+
+[:x :rest | {x. rest}] withLastArgRest valueWithArguments: #(1 2 3 4 5).
+[ :x :y | [ :x | x * y] value: x] value: 2 value: 3.
+
+[ :libName | (FileStream fileNamed: ((SmallScheme libraryDirPrefix) , libName , '.sts')) fileIn] value: 'pretty-print'.
+
+(SmallScheme globalRef: (#+ fromSchemeIdentifier)) value. "--> 0"
+(SmallScheme globalRef: (#+ fromSchemeIdentifier)) value: 2. "--> 2"
+(SmallScheme globalRef: (#+ fromSchemeIdentifier)) value: 2 value: 3. "--> 5"
+(SmallScheme globalRef: (#+ fromSchemeIdentifier)) valueWithArguments: #(1 2 3 4). "--> 10"
+
+(SmallScheme globalRef: #gensym) value: 'foo'.
+
+	self halt. "breakpoint"
+
+Process2 dynamicVars.
+
+"************ Scheme Testing ***********"
+SmallScheme fileinLibrary.
+SmallScheme initLibrary.
+
+scheme := SmallScheme newEnv.
+scheme fileinTestSuite.
+scheme runTestSuite.
+
+SmallScheme initialize.
+
+(FileStream fileNamed: (homeDir , '../ProtoScheme/out/lists.sts')) fileIn.
+SmallScheme initLists.
+
+(FileStream fileNamed: (homeDir , '../ProtoScheme/out/test8.sts')) fileIn.
+scheme test8.
+Transcript show: Character cr.
+
+(FileStream fileNamed: (homeDir , '../ProtoScheme/out/xlate.sts')) fileIn.
+scheme xlate.
+
+FileStream isAFileNamed: (FileDirectory default fullNameFor: 'test.scm').
+(FileDirectory forFileName: 'test.scm') fullNameFor: 'test.scm'.
+(scheme globalRef:  #'numberX2DX3Estring') value: 2.0. 
+
+SmallScheme initRead.
+(SmallScheme globalRef: (#'debug-read' fromSchemeIdentifier)) value: 
+	((FileDirectory forFileName: 'test.scm') fullNameFor: 'tmp1').
+Transcript show: Character cr.
+

@@ -1,0 +1,15 @@
+
+include path: ProtoScheme.sts.
+
+[
+  stdout cr << 'x21 as char is ' << ((('0x' , $2 , $1) asNumber) asCharacter).
+  stdout cr << '$d isHexChar is ' << ($d isHexChar).
+  | aString | := 'set-cdr!'.
+  stdout cr << aString << ' in SmallScript is '.
+  stdout << (aString fromSchemeIdentifier).
+  stdout cr << 'Again in Scheme is '.
+  stdout << ((aString fromSchemeIdentifier) toSchemeIdentifier).
+  stdout cr << 'From a symbol is ' 
+            << (((aString fromSchemeIdentifier) asSymbol) asSchemeObjString).
+  stdout cr.
+]

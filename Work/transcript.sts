@@ -1,0 +1,191 @@
+
+"Translated from file D:/SmallScript/ProtoScheme/Work/transcript.scm"
+
+include path: ProtoScheme.sts.
+[
+
+/* (define transcript:port #f) */
+
+ SchemeAccess.Scheme define:  #'transcript:port'
+  as:  false.
+
+/* (define (transcript-on filename) (set! transcript:port (open-output-file filename))) */
+
+ SchemeAccess.Scheme define:  #'transcript-on'
+  as: 
+       [ :filename | (SchemeAccess.Scheme setBang:  #'transcript:port' as: ((SchemeAccess.Scheme globalRef:  #'open-output-file')
+                value: ( filename))).].
+
+/* (define (transcript-off) (if (output-port? transcript:port) (close-output-port transcript:port)) (set! transcript:port #f)) */
+
+ SchemeAccess.Scheme define:  #'transcript-off'
+  as: 
+       [ (if (((SchemeAccess.Scheme globalRef:  #'output-port?')
+                    value: ( (SchemeAccess.Scheme globalRef:  #'transcript:port')
+                   )))
+                then [((SchemeAccess.Scheme globalRef:  #'close-output-port')
+                    value: ( (SchemeAccess.Scheme globalRef:  #'transcript:port')
+                   ))]).(SchemeAccess.Scheme setBang:  #'transcript:port' as:  false).].
+
+/* (define read-char (let ((read-char read-char) (write-char write-char)) (lambda opt (let ((ans (apply read-char opt))) (cond ((eof-object? ans)) ((output-port? transcript:port) (write-char ans transcript:port))) ans)))) */
+
+ SchemeAccess.Scheme define:  #'read-char'
+  as:  [ :readX2Dchar :writeX2Dchar | 
+           
+           [
+               | opt | := List new.
+                 thisBlock.arity+1 to: thisContext.contextArity do: 
+                     [:idx| opt add: (thisContext.contextArgAt(idx))].
+               opt := (opt asPair).
+                [ :ans | 
+                    [
+                      [ :temp156 | 
+                          (if ( temp156)
+                              then [ temp156]
+                              else [ (if (((SchemeAccess.Scheme globalRef:  #'output-port?')
+                                      value: ( (SchemeAccess.Scheme globalRef:  #'transcript:port')
+                                     )))
+                                  then [(writeX2Dchar value: ( ans) value: ( (SchemeAccess.Scheme globalRef:  #'transcript:port')
+                                     ))]
+                                  else [ 'Unspecified'])]).
+                     ](((SchemeAccess.Scheme globalRef:  #'eof-object?')
+                              value: ( ans))).
+                      ans.
+                    ] value..
+               ](((SchemeAccess.Scheme globalRef:  #'apply')
+                        value: ( readX2Dchar) value: ( opt))).].
+       ]( (SchemeAccess.Scheme globalRef:  #'read-char')
+                , (SchemeAccess.Scheme globalRef:  #'write-char')
+               ).
+
+/* (define read (let ((read read) (write write) (newline newline)) (lambda opt (let ((ans (apply read opt))) (cond ((eof-object? ans)) ((output-port? transcript:port) (write ans transcript:port) (if (eqv? #\newline (apply peek-char opt)) (newline transcript:port)))) ans)))) */
+
+ SchemeAccess.Scheme define:  #'read'
+  as:  [ :read :write :newline | 
+           
+           [
+               | opt | := List new.
+                 thisBlock.arity+1 to: thisContext.contextArity do: 
+                     [:idx| opt add: (thisContext.contextArgAt(idx))].
+               opt := (opt asPair).
+                [ :ans | 
+                    [
+                      [ :temp157 | 
+                          (if ( temp157)
+                              then [ temp157]
+                              else [ (if (((SchemeAccess.Scheme globalRef:  #'output-port?')
+                                      value: ( (SchemeAccess.Scheme globalRef:  #'transcript:port')
+                                     )))
+                                  then [ [
+                                   (write value: ( ans) value: ( (SchemeAccess.Scheme globalRef:  #'transcript:port')
+                                       )).
+                                    (if (((SchemeAccess.Scheme globalRef:  #'eqv?')
+                                            value: ( $
+) value: (((SchemeAccess.Scheme globalRef:  #'apply')
+                                            value: ( (SchemeAccess.Scheme globalRef:  #'peek-char')
+                                           ) value: ( opt)))))
+                                        then [(newline value: ( (SchemeAccess.Scheme globalRef:  #'transcript:port')
+                                           ))]).
+                                  ] value.]
+                                  else [ 'Unspecified'])]).
+                     ](((SchemeAccess.Scheme globalRef:  #'eof-object?')
+                              value: ( ans))).
+                      ans.
+                    ] value..
+               ](((SchemeAccess.Scheme globalRef:  #'apply')
+                        value: ( read) value: ( opt))).].
+       ]( (SchemeAccess.Scheme globalRef:  #'read')
+                , (SchemeAccess.Scheme globalRef:  #'write')
+                , (SchemeAccess.Scheme globalRef:  #'newline')
+               ).
+
+/* (define write-char (let ((write-char write-char)) (lambda (obj . opt) (apply write-char obj opt) (if (output-port? transcript:port) (write-char obj transcript:port))))) */
+
+ SchemeAccess.Scheme define:  #'write-char'
+  as:  [ :writeX2Dchar | 
+           
+           [ :obj | 
+               | opt | := List new.
+                 thisBlock.arity+1 to: thisContext.contextArity do: 
+                     [:idx| opt add: (thisContext.contextArgAt(idx))].
+               opt := (opt asPair).
+                [
+                 ((SchemeAccess.Scheme globalRef:  #'apply')
+                      value: ( writeX2Dchar) value: ( obj) value: ( opt)).
+                  (if (((SchemeAccess.Scheme globalRef:  #'output-port?')
+                          value: ( (SchemeAccess.Scheme globalRef:  #'transcript:port')
+                         )))
+                      then [(writeX2Dchar value: ( obj) value: ( (SchemeAccess.Scheme globalRef:  #'transcript:port')
+                         ))]).
+                ] value..].
+       ]( (SchemeAccess.Scheme globalRef:  #'write-char')
+               ).
+
+/* (define write (let ((write write)) (lambda (obj . opt) (apply write obj opt) (if (output-port? transcript:port) (write obj transcript:port))))) */
+
+ SchemeAccess.Scheme define:  #'write'
+  as:  [ :write | 
+           
+           [ :obj | 
+               | opt | := List new.
+                 thisBlock.arity+1 to: thisContext.contextArity do: 
+                     [:idx| opt add: (thisContext.contextArgAt(idx))].
+               opt := (opt asPair).
+                [
+                 ((SchemeAccess.Scheme globalRef:  #'apply')
+                      value: ( write) value: ( obj) value: ( opt)).
+                  (if (((SchemeAccess.Scheme globalRef:  #'output-port?')
+                          value: ( (SchemeAccess.Scheme globalRef:  #'transcript:port')
+                         )))
+                      then [(write value: ( obj) value: ( (SchemeAccess.Scheme globalRef:  #'transcript:port')
+                         ))]).
+                ] value..].
+       ]( (SchemeAccess.Scheme globalRef:  #'write')
+               ).
+
+/* (define display (let ((display display)) (lambda (obj . opt) (apply display obj opt) (if (output-port? transcript:port) (display obj transcript:port))))) */
+
+ SchemeAccess.Scheme define:  #'display'
+  as:  [ :display | 
+           
+           [ :obj | 
+               | opt | := List new.
+                 thisBlock.arity+1 to: thisContext.contextArity do: 
+                     [:idx| opt add: (thisContext.contextArgAt(idx))].
+               opt := (opt asPair).
+                [
+                 ((SchemeAccess.Scheme globalRef:  #'apply')
+                      value: ( display) value: ( obj) value: ( opt)).
+                  (if (((SchemeAccess.Scheme globalRef:  #'output-port?')
+                          value: ( (SchemeAccess.Scheme globalRef:  #'transcript:port')
+                         )))
+                      then [(display value: ( obj) value: ( (SchemeAccess.Scheme globalRef:  #'transcript:port')
+                         ))]).
+                ] value..].
+       ]( (SchemeAccess.Scheme globalRef:  #'display')
+               ).
+
+/* (define newline (let ((newline newline)) (lambda opt (apply newline opt) (if (output-port? transcript:port) (newline transcript:port))))) */
+
+ SchemeAccess.Scheme define:  #'newline'
+  as:  [ :newline | 
+           
+           [
+               | opt | := List new.
+                 thisBlock.arity+1 to: thisContext.contextArity do: 
+                     [:idx| opt add: (thisContext.contextArgAt(idx))].
+               opt := (opt asPair).
+                [
+                 ((SchemeAccess.Scheme globalRef:  #'apply')
+                      value: ( newline) value: ( opt)).
+                  (if (((SchemeAccess.Scheme globalRef:  #'output-port?')
+                          value: ( (SchemeAccess.Scheme globalRef:  #'transcript:port')
+                         )))
+                      then [(newline value: ( (SchemeAccess.Scheme globalRef:  #'transcript:port')
+                         ))]).
+                ] value..].
+       ]( (SchemeAccess.Scheme globalRef:  #'newline')
+               ).
+
+]
+"--- E O F ---"

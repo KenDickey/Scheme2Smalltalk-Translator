@@ -1,0 +1,9 @@
+
+include path: ProtoScheme.sts.
+[
+stdout cr << ('0' asNumber).
+
+stdout cr << '(string->number "0") ' 
+	<< ((R5RS.Scheme globalRef:  #'string->number') value: '0').
+
+]

@@ -1,0 +1,39 @@
+
+"Translated from file D:/SmallScript/ProtoScheme/SCM/x.scm"
+include path: ProtoScheme.sts.
+[
+
+/* (let () (define (even n) (if (= n 0) #t (odd (- n 1)))) (define (odd n) (if (= n 0) #f (even (- n 1)))) (display "(even 7) is ") (display (even 7)) (newline) (display "(odd 17) is ") (display (odd 17))) */
+ [
+     
+      [ | even odd |
+     
+        even := (
+       [ :n |  (if (((((R5RS.Scheme globalRef:  #'=')
+                    value: ( n) value: ( 0))) == false) not)
+                then [ true]
+                else [(odd value: (((R5RS.Scheme globalRef:  #'-')
+                    value: ( n) value: ( 1))))])]).
+        odd := (
+       [ :n |  (if (((((R5RS.Scheme globalRef:  #'=')
+                    value: ( n) value: ( 0))) == false) not)
+                then [ false]
+                else [(even value: (((R5RS.Scheme globalRef:  #'-')
+                    value: ( n) value: ( 1))))])]).
+          [
+           ((R5RS.Scheme globalRef:  #'display')
+                value: ( '(even 7) is ')).
+           ((R5RS.Scheme globalRef:  #'display')
+                value: ((even value: ( 7)))).
+           ((R5RS.Scheme globalRef:  #'newline')
+                value).
+           ((R5RS.Scheme globalRef:  #'display')
+                value: ( '(odd 17) is ')).
+           ((R5RS.Scheme globalRef:  #'display')
+                value: ((odd value: ( 17)))).
+          ] value.
+     ] value.
+ ]().
+
+]
+"--- E O F ---"

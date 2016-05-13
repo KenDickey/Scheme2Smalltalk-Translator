@@ -1,0 +1,519 @@
+"" FILE: Pair.sts
+"" IMPLEMENTS: ProtoScheme Pair datatype
+"" AUTHOR: Ken Dickey
+"" DATE: 30 November 2001
+
+"" COPYRIGHT (c) 2001, 2002 by Kenneth A Dickey
+"" This software may be used for any purpose but
+"" without warranty or liability of any kind
+"" provided this notice is retained.
+
+Method behavior: Object [
+isPair
+	^false
+]
+
+Method behavior: Object [
+isEmptyList
+	^(self == nil)
+]
+
+Method behavior: UndefinedObject [
+length
+	^0 "zero"
+]
+
+Method behavior: UndefinedObject [
+asSchemeString
+	^'()'  "nil is theEmptyList"
+]
+
+Method behavior: UndefinedObject [
+reverse
+	^nil "self"
+]
+
+"asPair only works on Lists, id elsewhere."
+Method behavior: Object [
+asPair
+	^self
+]
+
+"Convert SmallScript Lists to Scheme Lists"
+Method behavior: List [
+asPair
+	if (self isEmpty)
+	then ^nil
+	else [
+	 | result |   := nil.
+	 | lastPair | := nil.
+	 self do: 
+	    [ :elt |
+ 	         | newCons | := R5RS.Pair car: (elt asPair) cdr: nil.
+		 if (lastPair == nil)
+		   then [result := newCons]
+		   else [lastPair setCdr: newCons].
+		 lastPair := newCons.
+	        ].
+	 ^result
+	].
+]
+
+"Convert SmallScript Lists to Scheme Rest List"
+Method behavior: List [
+asRest
+	if (self isEmpty)
+	then ^nil
+	else [
+	 | result |   := nil.
+	 | lastPair | := nil.
+	 self do: 
+	    [ :elt |
+ 	         | newCons | := R5RS.Pair car: elt cdr: nil.
+		 if (lastPair == nil)
+		   then [result := newCons]
+		   else [lastPair setCdr: newCons].
+		 lastPair := newCons.
+	        ].
+	 ^result
+	].
+]
+
+
+
+"===================================================="
+
+
+Module name: R5RS {
+
+"============================
+  Class Pair: Scheme Lists
+ ============================"
+Class name: Pair
+	fields: auto car, cdr
+{
+  "Cons(tructor)
+   Pair car: 2 cdr: 3. -> (2 . 3)"
+  Function [
+  car: aCar cdr: aCdr
+	^super new car: aCar; cdr: aCdr
+  ]
+
+  "alternate syntax for car:cdr:
+   Pair new: 2 : 3. -> (2 . 3)"
+  Function [
+  new: aCar : aCdr
+	^super new car: aCar; cdr: aCdr
+  ]
+
+  Method [
+  isPair
+	^true
+  ]
+
+  Method [
+  asString
+	| str | := String new << '(' << (car asString).
+	| thing | := cdr.
+	[thing isPair]
+		whileTrue: [str := str ,' ', ((thing car) asString).
+			    thing := (thing cdr).
+			   ].
+	^if (thing == nil)
+	    then (str , ')' )
+	    else (str , ' . ' , (thing asString) , ')').
+  ]
+
+  Method [
+  asSchemeListString
+	| str | := String new << '(' << (car asSchemeString).
+	| thing | := cdr.
+	[thing isPair]
+		whileTrue: [str := str ,' ', ((thing car) asSchemeString).
+			    thing := (thing cdr).
+			   ].
+	^(if (thing == nil)
+	    then [ str , ')' ]
+	    else [ str , ' . ' , (thing asSchemeString) , ')' ])
+  ]
+
+  Method [
+  asSchemeObjListString
+	| str | := String new << '(' << (car asSchemeObjString).
+	| thing | := cdr.
+	[thing isPair]
+		whileTrue: [str := str ,' ', ((thing car) asSchemeObjString).
+			    thing := (thing cdr).
+			   ].
+	^(if (thing == nil)
+	    then [ str , ')' ]
+	    else [ str , ' . ' , (thing asSchemeObjString) , ')' ])
+  ]
+
+
+  Method [
+  asSchemeString
+	if (((self cdr) isPair) ifTrue: [(self cddr) isEmptyList])
+	[
+	  if (#quote = car)
+	    [^String new << '''' << ((self cadr) asSchemeString)]
+	  else if (#quasiquote = car)
+	    [^String new << '``' << ((self cadr) asSchemeString)]
+	  else if (#unquote = car)
+	    [^String new << ','  << ((self cadr) asSchemeString)]
+	  else if (#'unquote-splicing' = car)
+	    [^String new << ',@' << ((self cadr) asSchemeString)]
+	  else [^self asSchemeListString].
+	]
+	else [^self asSchemeListString].
+  ]
+
+  Method [
+  asSchemeObjString
+	if (((self cdr) isPair) ifTrue: [(self cddr) isEmptyList])
+	[
+	  if (#quote = car)
+	    [^String new << '''' << ((self cadr) asSchemeObjString)]
+	  else if (#quasiquote = car)
+	    [^String new << '``' << ((self cadr) asSchemeObjString)]
+	  else if (#unquote = car)
+	    [^String new << ','  << ((self cadr) asSchemeObjString)]
+	  else if (#'unquote-splicing' = car)
+	    [^String new << ',@' << ((self cadr) asSchemeObjString)]
+	  else [^self asSchemeObjListString].
+	]
+	else [^self asSchemeObjListString].
+  ]
+
+ Method [
+  car: aCar cdr: aCdr
+	car := aCar.
+	cdr := aCdr.
+  ]
+
+  Method [
+  setCar: aCar
+	car := aCar.
+  ]
+
+  Method [
+  setCdr: aCdr
+	cdr := aCdr.
+  ]
+
+
+  Method [
+  car
+	^car
+  ]
+
+  Method [
+  cdr
+	^cdr
+  ]
+
+  Method [
+  isProper "Proper List?"
+	| first | := car.
+	| rest  | := cdr.
+	[(rest isPair) and ((rest == first) not)]
+	    whileTrue: [first := rest.
+			rest  := (rest cdr)].
+        ^(rest == nil)
+  ]
+
+  Method [
+  length
+	| first | := car.
+	| rest  | := cdr.
+        | len | := 1.
+	[(rest isPair) and ((rest == first) not)]
+	    whileTrue: [first := rest.
+			rest  := (rest cdr).
+			len   :+= 1].
+        ^(if ((rest == first) and ((first == nil) not))
+	    then [Infinity new; initialize] "??check me??"
+	    else len)
+  ]
+
+  Method [
+  size
+	^(self length)
+  ]
+
+  Method [
+  lastPair
+	| p | := self cdr.
+        | last | := self.
+	[p isPair]
+	    whileTrue: [last := p.
+			p := p cdr.]. 
+	^last
+  ]
+
+  Method [
+  appendX21: other
+	^((self lastPair) setCdr: other)
+  ]
+
+  Method [
+  append: other
+	 | result |   := nil.
+	 | lastPair | := nil.
+	 self do: 
+	    [ :elt |
+ 	         | newCons | := R5RS.Pair car: (elt asPair) cdr: nil.
+		 if (lastPair == nil)
+		   then [result := (newCons setCdr: other)]
+		   else [lastPair setCdr: newCons].
+		 lastPair := newCons.
+	        ].
+	 ^result
+  ]
+
+  Method [
+  reverse
+        | new | := nil.
+	self do: [:val | new := (Pair car: val cdr: new)].
+	^new
+  ]
+
+
+  "Collection Protocol"
+
+  Method [ "foreach"
+  do: aBlock 
+	| p | := self.
+	[p isPair]
+	    whileTrue: [aBlock value: (p car).
+                        p := p cdr.].  
+	if ((p == nil) not)
+	[aBlock value: p]. "Improper list. Signal an error?"
+  ]
+
+  Method [ "map1"
+  collect: aBlock
+	 | result |   := nil.
+	 | lastPair | := nil.
+	 | p | := self.
+
+ 	[p isPair]
+	 whileTrue: 
+            [| newCons | := Pair car: (aBlock value: (p car))
+				 cdr: nil.
+	    if (lastPair == nil)
+		then [result := newCons]
+		else [lastPair setCdr: newCons].
+	     lastPair := newCons.
+             p := p cdr.
+            ].  
+	 ^result
+  ]
+
+  Method [ "Return 1st match"
+  detect: predicateBlock
+	| p | := self.
+	[p isPair]
+	    whileTrue: [if (predicateBlock value: (p car))
+			then [^(p car)]
+                        else [p := p cdr.].].
+	^false
+  ]
+  
+  Method [
+  select: predicateBlock
+	 | result |   := nil.
+	 | lastPair | := nil.
+	 | p | := self.
+
+ 	[p isPair]
+	 whileTrue: 
+            [if (predicateBlock value: (p car))
+	     then [
+		| newCons | := Pair car: (p car) cdr: nil.
+		if (lastPair == nil)
+		  then [result := newCons]
+		  else [lastPair setCdr: newCons].
+	        lastPair := newCons.].
+             p := p cdr.
+            ].  
+	 ^result
+  ]
+
+  Method [
+  reject: predicateBlock
+	^self select: [:elt | ((predicateBlock value: elt) not)]
+  ]
+
+
+  "cadar and friends"
+
+  Method [
+  caar
+	^(car car)
+  ]
+
+  Method [
+  cadr
+	^(cdr car)
+  ]
+
+  Method [
+  cddr
+	^(cdr cdr)
+  ]
+
+  Method [
+  cdar
+	^(car cdr)
+  ]
+
+  Method [
+  caaar
+	^((car car) car)
+  ]
+
+  Method [
+  caadr
+	^((cdr car) car)
+  ]
+
+  Method [
+  cdaar
+	^((car car) cdr)
+  ]
+
+  Method [
+  caddr
+	^((cdr cdr) car)
+  ]
+
+  Method [
+  cadar
+	^((car cdr) car)
+  ]
+
+  Method [
+  cdadr
+	^((cdr car) cdr)
+  ]
+
+  Method [
+  cdddr
+	^((cdr cdr) cdr)
+  ]
+
+  Method [
+  cddar
+	^((car cdr) cdr)
+  ]
+
+  Method [
+  caaaar
+	^(((car car) car) car)
+  ]
+
+  Method [
+  caaadr
+	^(((cdr car) car) car)
+  ]
+
+  Method [
+  caaddr
+	^(((cdr cdr) car) car)
+  ]
+
+  Method [
+  caadar
+	^(((car cdr) car) car)
+  ]
+
+  Method [
+  cadaar
+	^(((car car) cdr) car)
+  ]
+
+  Method [
+  cdaaar
+	^(((car car) car) cdr)
+  ]
+
+  Method [
+  cadadr
+	^(((cdr car) cdr) car)
+  ]
+
+  Method [
+  cadddr
+	^(((cdr cdr) cdr) car)
+  ]
+
+  Method [
+  caddar
+	^(((car cdr) cdr) car)
+  ]
+
+  Method [
+  cdaadr
+	^(((cdr car) car) cdr)
+  ]
+
+  Method [
+  cdaddr
+	^(((cdr cdr) car) cdr)
+  ]
+
+  Method [
+  cdadar
+	^(((car cdr) car) cdr)
+  ]
+
+  Method [
+  cddadr
+	^(((cdr car) cdr) cdr)
+  ]
+
+  Method [
+  cddddr
+	^(((cdr cdr) cdr) cdr)
+  ]
+
+  Method [
+  cdddar
+	^(((car cdr) cdr) cdr)
+  ]
+
+  Method [
+  asPair
+	^self
+  ]
+
+  Method [
+  asList
+	| aList | := List new.
+	self do: [:elt| aList add: elt].
+	^aList
+  ]
+
+  Method [ "equal?"
+  = other
+	^(if (other isPair)
+	  then [if (car = (other car)) 
+	         then [cdr = (other cdr)]
+	         else #f
+	  ]
+	  else #f)
+  ]
+
+
+ "" Pair Class init code
+  [
+	stdout << 'loaded file: Pair.sts'.
+	stdout cr.
+   ]
+
+} "end Pair"
+} "end Module"
+
+
+"  ---    E O F   ---  "

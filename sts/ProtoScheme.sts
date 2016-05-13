@@ -1,0 +1,280 @@
+"" FILE: ProtoScheme.sts
+"" IMPLEMENTS: Core Scheme Access
+"" AUTHOR: Ken Dickey
+"" DATE: 28 November 2001
+
+"" COPYRIGHT (c) 2001, 2002 by Kenneth A Dickey
+"" This software may be used for any purpose but
+"" without warrenty or liability of any kind
+"" as long as this notice remains in tact.
+
+"" NOTES:
+""   This system is intended as an intermediary/prototype
+"" to allow me to learn the syntax and semantics for a full
+"" (perhaps less Call/CC) implementation of ANSI/IEEE/ISO Scheme
+"" in SmallScript.  Pole Star goal is compile Scheme to SmallScript
+"" bytecodes in a unified runtime.  I would like to be able
+"" to transliterate/decompile SmallScript as Scheme (view SS
+"" through Scheme glasses).
+""
+"" This is a _very_ rough cut to get the basic Scheme runtime up.
+""
+"" The initial strategy is to make a Scheme runtime by augmenting the
+"" SmallScript runtime and to generate code by translitering from
+"" Scheme to SS.  E.g. (lambda (n) (+ n 2)) -> [:n|n + 2].
+""
+"" The Scheme environment is contained in the scheme instance of the
+"" Scheme Class.
+
+"" Scheme allows one to redefine primitives, e.g.:
+"" (define car 'chevy)
+"" But this cannot have an effect on other Scheme
+"" runtime functions, e.g. append, cadr, which use car.
+"" I.e. the original bindings are used there.
+"" The R5RS namespace is used to store the 'immutable.
+"" Scheme namespace.  Each Scheme instance 'inherits' from
+"" this but has their own dictionary in which a user can
+"" redefine (shadow) "primitives" without having an effect
+"" on the R5RS Scheme prims.
+
+
+"DataTypes"
+
+include path: SchemeString.sts.  "asSchemeString (DISPLAY)"
+include path: Pair.sts.          "Cons cells"
+
+"============================="
+Module name: R5RS 
+    exports: Scheme
+{
+"============================="
+
+Function [ "<$dllexport>"
+newSchemeEnv
+	^(Scheme newEnv)
+]
+
+"============================="
+Class   name: Scheme 
+	fields: userEnv
+	shared-fields: thread dynamicVars
+	"scope: R5RS"
+"============================="
+{
+  "Class methods are Implementation"
+  "Instance methods are User"
+  Function [
+  globalRef: nameSymbol
+	^(R5RS at: nameSymbol
+	       ifAbsent: 
+		[Exception signal: 
+		 'Undefined global name: ' ,
+		 (nameSymbol asString)])
+  ]
+
+  Function [
+  define: nameSymbol as: value
+	R5RS at: nameSymbol put: value.
+	^value
+  ]
+
+  Function [
+  setX21: nameSymbol as: value
+	R5RS at: nameSymbol 
+	     ifAbsent:
+	       [Exception signal: 
+		'Must DEFINE value before SET!: ' ,
+		(nameSymbol asString)].
+	R5RS at: nameSymbol put: value.
+	^value
+  ]
+
+  Function [
+  newEnv
+	^(self new; initialize)
+  ]
+
+"=================="
+  Method [
+  globalRef: nameSymbol
+	^(userEnv at: nameSymbol
+	       ifAbsent: 
+		[R5RS at: nameSymbol
+		 ifAbsent:
+			[Exception signal: 
+		 	'Undefined global name: ' ,
+		 	(nameSymbol asString)]])
+  ]
+
+  Method [
+  define: nameSymbol as: value
+	userEnv at: nameSymbol put: value.
+	^value
+  ]
+
+  Method [
+  setX21: nameSymbol as: value
+	userEnv at: nameSymbol 
+	     ifAbsent:
+	       [Exception signal: 
+		'Must DEFINE value before SET!: ' ,
+		(nameSymbol asString)].
+	userEnv at: nameSymbol put: value.
+	^value
+  ]
+
+
+
+  "@@@???HOW TO DO PER-THREAD INITIALIZATION???@@@"
+
+  "PER-THREAD DYNAMIC VARIABLES"
+  "Each var is a stack of values with the last entry being the current one."
+
+  Function [
+  dynamicDefine: var as: val
+	dynamicVars isNil ifTrue: [dynamicVars := Dictionary new].
+	dynamicVars at: var put: {val.}.
+  ]
+
+  Function [
+  dynamicRef: var
+	dynamicVars isNil ifTrue: [dynamicVars := Dictionary new].
+	| valueStack | := dynamicVars at: var 
+				ifAbsent: [Exception signal: 
+			 		  'Attempt to access undefined dynamic variable: ' ,
+			 		  (var toSchemeIdentifier)].
+	if (valueStack.size isZero)
+		[Exception signal: 'Attempt to reference undefined dynamic variable: ' ,
+			 	   (var toSchemeIdentifier)].
+	^(valueStack[valueStack.size]) "last entry is most recent value".
+  ]
+
+
+  Function [
+  dynamicRef: var withDefault: aBlock
+	dynamicVars isNil ifTrue: [^(aBlock value)].
+	| valueStack | := dynamicVars at: var 
+				ifAbsent: [^(aBlock value)].
+	(valueStack.size isZero) ifTrue: [^(aBlock value)].
+	^(valueStack[valueStack.size]) "last entry is most recent value".
+  ]
+
+  Function [
+  dynamicSetX21: var as: newVal
+	dynamicVars isNil ifTrue: [dynamicVars := Dictionary new].
+	| valueStack | := dynamicVars at: var 
+				ifAbsent: [Exception signal: 
+			 		  'Attempt to access undefined dynamic variable: ' ,
+			 		  (var toSchemeIdentifier)].
+	if (valueStack.size isZero)
+		[Exception signal: 'Attempt to set! undefined dynamic variable: ' ,
+			 	   (var toSchemeIdentifier)].
+	valueStack[valueStack.size] := newVal.
+  ]
+
+  Function [
+  dynamicPush: var as: val
+	dynamicVars isNil ifTrue: [dynamicVars := Dictionary new].
+	| valueStack | := dynamicVars at: var.
+	(valueStack isNil)
+	   ifTrue:  [valueStack := {val.}. 
+		     dynamicVars at: var put: valueStack.]
+	   ifFalse: [valueStack add: val].
+  ]
+
+  Function [
+  dynamicPop: var
+	dynamicVars isNil ifTrue: [dynamicVars := Dictionary new].
+	| valueStack | := dynamicVars at: var 
+				ifAbsent: [Exception signal: 
+			 		  'Attempt to remove undefined dynamic variable: ' ,
+			 		  (var toSchemeIdentifier)].
+	if (valueStack.size isZero)
+		[Exception signal: 'Attempt to remove undefined dynamic variable: ' ,
+			 	   (var toSchemeIdentifier)].
+	| lastVal | := valueStack[valueStack.size].
+	valueStack deleteLast.
+	^lastVal. "Note: typically ignored"
+  ]
+
+
+  Method [ "instance initialization"
+  initialize
+	super initialize.
+	userEnv := Dictionary new.
+	self.
+  ]
+
+
+  "" Class init code
+  [
+
+	"===================="
+	"PRIMITIVE PROCEDURES"
+	"===================="
+
+	"NOTE: SS can't handle #foo?, use #'foo?'."
+	"Note: globals are quoted, e.g. #'set-car!'."
+	"Lexical vars use toSchemeIdentifier and fromSchemeIdentifier."
+	"('set-car!' fromSchemeIdentifier) -> 'setX2dcarX21'"
+	"('setX2dcarX21' toSchemeIdentifier) -> 'set-car!'"
+
+
+	"EQUALITY"
+	R5RS.Scheme define: #'eq?' as: [:a :b| a == b].
+	R5RS.Scheme define: #'eqv?' 
+                              as: [:a :b| ((a == b) or 
+					   ((a isKindOf: Number) and
+                                            (b isKindOf: Number) and
+                                            (a = b)))].
+	R5RS.Scheme define: #'equal?'
+                              as: [:a :b| ((a == b) or (a = b))].
+
+	"ERROR"
+	R5RS.Scheme define: #'error' 
+			      as: [:message :irritant|
+				     Exception signal: 
+				       ((message asString) , ': ',
+					 (irritant asSchemeObjString)).].
+
+	R5RS.Scheme define: #'warning' 
+			      as: [:message :irritant|
+				     Warning signal: 
+				       ((message asString) , ': ',
+					 (irritant asSchemeObjString)).].
+
+	R5RS.Scheme define: #'nil' as: nil. "theEmptyList".
+
+	stdout << 'loaded file: ProtoScheme.sts'.
+	stdout cr.
+  ]
+
+} "end Class R5RS.Scheme"
+
+	"R5RS Library"
+include path: numbers.sts.
+include path: booleans.sts.
+include path: lists.sts.
+include path: symbols.sts.
+include path: characters.sts.
+include path: strings.sts.
+include path: vectors.sts.
+include path: control.sts.
+include path: io.sts.
+/***
+include path: eval.sts.
+include path: ratize.sts.
+***/
+include path: read.sts.
+include path: string2number.sts.
+/***
+include path: transcript.sts.
+***/
+[
+	stdout << 'loaded ProtoScheme library code'.
+	stdout cr.
+]
+
+} "end Module R5RS"
+
+		"  --- E O F ---  "

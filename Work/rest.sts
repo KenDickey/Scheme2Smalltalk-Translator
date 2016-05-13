@@ -1,0 +1,26 @@
+
+[
+    | c | := 
+        [ | list | := List new. 
+	  thisBlock.arity+1 to: thisContext.contextArity 
+		            do: [:i| 
+		"stdout cr << i << ' ' << thisContext.contextArgAt(i)."
+		list add: (thisContext.contextArgAt(i))].
+	  list].
+    stdout cr << 'c(1,$b,#c,''d'',{#e.}) is '.
+    stdout    << ( c( 1, $b, #c, 'd', { #e. } ) ). 
+    stdout cr.
+    stdout cr << '(c valueWithArguments: {1. 2. 3. 4. 5. 6.}) is '.
+    | args | := {1. 2. 3. 4. 5. 6.}.
+    stdout << ( c valueWithArguments: args ).
+    stdout cr.
+    stdout cr << '(c value: 1 value: 2 value: 3) is '.
+    stdout    << (c value: 1 value: 2 value: 3).
+    stdout cr.
+    stdout cr << '( c( 1, 2 ) ) is '.
+    stdout    << ( c( 1, 2 ) ).
+    stdout cr.
+    stdout cr << 'c(1,$b,#c,''d'',{#e.}) is '.
+    stdout    << ( c( 1, $b, #c, 'd', { #e. } ) ). 
+    stdout cr.
+]

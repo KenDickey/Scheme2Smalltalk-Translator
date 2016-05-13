@@ -1,0 +1,42 @@
+include path: ProtoScheme.sts.
+[
+/* (define (number? obj) 
+	(if (or (: obj "isKindOf:" ($ "Character")) 
+	        (: obj "isKindOf:" ($ "Boolean")) 
+                (: obj "==" ($ nil))) 
+            #f 
+            (: obj "isKindOf:" ($ "Number")))) 
+*/
+
+ R5RS.Scheme define:  #'number?'
+  as: 
+       [ :obj | 
+	| result | := (if ((( [ :temp1 | 
+                    (if ((( temp1) == false) not)
+                        then [ temp1]
+                        else [ [ :temp2 | 
+                            (if ((( temp2) == false) not)
+                                then [ temp2]
+                                else [ ( obj == nil)]).
+                       ]( ( obj isKindOf: Boolean))]).
+               ]( ( obj isKindOf: Character))) == false) not)
+                then [ false]
+                else [ ( obj isKindOf: Number)]).
+	stdout cr << '*** obj is ' << obj << ' = ' << (obj asSchemeObjString).
+	stdout cr << '( obj isKindOf: Number)    is ' << ( obj isKindOf: Number).
+	stdout cr << '( obj isKindOf: Boolean)   is ' << ( obj isKindOf: Boolean).
+	stdout cr << '( obj isKindOf: Character) is ' << ( obj isKindOf: Character).
+	stdout cr << '(null? obj)   is ' << ((R5RS.Scheme globalRef:  #'null?') value: ( obj)).
+	stdout cr << '(number? obj) is ' << result.
+	stdout cr.
+
+	result.
+].
+
+
+stdout << ((R5RS.Scheme globalRef:  #'number?') value: true).
+stdout << ((R5RS.Scheme globalRef:  #'number?') value: nil).
+stdout << ((R5RS.Scheme globalRef:  #'number?') value: $c).
+stdout << ((R5RS.Scheme globalRef:  #'number?') value: 'str').
+stdout << ((R5RS.Scheme globalRef:  #'number?') value: 3).
+]

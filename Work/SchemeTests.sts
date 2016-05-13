@@ -1,0 +1,44 @@
+"" FILE: SchemeTests.sts
+"" IMPLEMENTS: Basic ProtoScheme Tests
+"" AUTHOR: Ken Dickey
+"" DATE: 01 December 2001
+
+include path: ProtoScheme.sts.
+/*include path: ProtoBasic.sts. "includes ProtoScheme"*/
+
+[
+  stdout << '<<Starting Scheme Tests>>'.
+  stdout cr.
+
+  | scheme | := Scheme new.
+
+  scheme define: #aVector as: {1. #two. 'three'. $4}.
+  stdout cr << 'aVector has Scheme value '.
+  stdout    << ((scheme globalRef: #aVector) asSchemeObjString).
+
+  stdout cr << 'Scheme is unique? ' << (scheme == (Scheme new)).
+
+  | aList | := {$a. #sym. 3. 'some string'. true. false.}.
+  aList := (aList asPair).
+  (SchemeAccess at: #newline) value: stdout.
+  stdout cr << 'aList is '.
+  (SchemeAccess at: #write) value: aList.
+
+  stdout cr << '(pair? aList) is '
+            << (((scheme globalRef: #'pair?')
+		 valueWithArguments: {aList})
+		  asSchemeString).
+
+  | listP | := (scheme globalRef: #'list?').
+  stdout cr << '(list? aList) is '
+            << ((listP value: aList) asSchemeObjString).
+  | improperList | := Pair car: 1 cdr 2.
+  stdout cr << '(list? (cons 1 2)) is '
+            << ((listP value: improperList) asSchemeObjString).
+
+/*
+*/
+  stdout cr.
+]
+
+

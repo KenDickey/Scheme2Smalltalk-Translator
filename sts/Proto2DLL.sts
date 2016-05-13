@@ -1,0 +1,9 @@
+Compiler cmds: '/target:dll'.
+
+include path: ProtoScheme.sts.
+
+[
+  stdout cr << 'Completed dll R5RS'.
+  stdout cr.
+]
+

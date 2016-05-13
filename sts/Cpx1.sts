@@ -1,0 +1,212 @@
+Method class: Number
+[
+signum
+	^(if (self < 0)
+	   then -1
+	   else  1)
+]
+
+Method class: Number
+[
+i
+	^(if (self isKindOf: Cpx) 
+	  then self 
+	  else (Cpx real: 0 imaginary: self))
+]
+
+
+"============================
+  Class Complex
+ ============================"
+Class	   name: Cpx
+	extends: Number
+	 fields: auto real, imaginary
+{
+
+  " Functions from  _Less Comples Elementary Functions_
+    by Henry Baker
+    ACM SIGPLAN Notices, Volume 27, Number 11, November 1992"
+
+  Function class: Cpx [
+  real: rNum imaginary: iNum
+	^super new real: rNum; imaginary: iNum
+  ]
+
+  Function class: Cpx [
+  real: rNum imag: iNum
+	^super new real: rNum; imaginary: iNum
+  ]
+
+  Function class: Cpx [
+  new: rNum : iNum
+	^super new real: rNum; imaginary: iNum
+  ]
+
+
+  Method class: Cpx [
+  asString
+	^(if (imaginary = 0)
+	  then [real asString]
+	  else if (real = 0)
+	  then [(imaginary asString), 'i']
+	  else if (imaginary < 0)
+	  then [(real asString), (imaginary asString), 'i']
+	  else [(real asString), '+', (imaginary asString), 'i'])
+  ]
+
+  Method class: Cpx [
+  imag
+	^imaginary
+  ]
+
+  Method class: Cpx [
+  + <Cpx>other
+	^Cpx real: (real + (other real)) 
+	imaginary: (imaginary + (other imag))
+  ]
+
+  Method class: Cpx [
+  - <Cpx>other
+	^Cpx real: (real - (other real)) 
+	imaginary: (imaginary - (other imaginary))
+  ]
+
+  Method class: Cpx [
+  * <Cpx>other
+	| x1 | := (self  real).
+	| x2 | := (other real).
+	| y1 | := (self  imag).
+	| y2 | := (other imag).
+	^Cpx real:      ((x1 * x2) - (y1 * y2)) 
+	     imaginary: ((x1 * y2) + (y1 * x2))
+  ]
+
+  Method class: Cpx [
+  / <Cpx>other
+	| x1 | := (self  real).
+	| x2 | := (other real).
+	| y1 | := (self  imag).
+	| y2 | := (other imag).
+	^Cpx real:      ((x1 * x2) + (y1 * y2)) / ((x2 * x2) + (y2 * y2))
+	     imaginary: ((y1 * x2) - (x1 * y2)) / ((x2 * x2) + (y2 * y2))
+  ]
+
+  Method class: Cpx [
+  square
+	| x | := real.
+	| y | := imaginary.
+	^Cpx real:      ((x + y) * (x - y))
+	     imaginary: (2 * x * y)
+  ]
+
+  Method class: Cpx [
+  conjugate
+	| x | := real.
+	| y | := imaginary.
+	^Cpx real: x imaginary: (- y)
+  ]
+
+  Method class: Cpx [
+  norm
+	^(self * (self conjugate))
+  ]
+
+  Method class: Cpx [
+  abs
+	| x | := real.
+	| y | := imaginary.
+	^(((x * x) + (y * y)) sqrt)
+  ]
+
+  Method class: Cpx [
+  inverse
+	^(self / (self norm))
+  ]
+
+  Method class: Cpx [ "NB: signum(0) is 1"
+  signum
+	^(self / (self abs))
+  ]
+
+  Method class: Cpx [
+  exp
+	| x | := real.
+        | y | := imaginary.
+        | e2x | := x exp.
+	^(Cpx real: (e2x * (y cos)) imaginary: (e2x * (y sin)))
+  ]
+
+  Method class: Cpx [
+  sin
+	| x | := real.
+	| y | := imaginary.
+	^Cpx real: ((x sin) * (y cosh)) imaginary: ((x cos) * (y sinh))
+  ]
+
+  Method class: Cpx [
+  cos
+	| x | := real.
+	| y | := imaginary.
+	^Cpx real: ((x cos) * (y cosh)) imaginary: (- ((x sin) * (y sinh)))
+  ]
+
+  Method class: Cpx [
+  tan
+	| x2 | := (real * 2).
+	| y2 | := (imaginary * 2).
+	^Cpx real: ((x2 sin) / ((x2 cos) + (y2 cosh)))
+	imaginary: ((y2 tanh) / (1 + ((x2 cos) / (y2 cosh))))
+  ]
+
+  Method class: Cpx [
+  asin
+	| x | := real.
+	| y | := imaginary.
+        | az | := (self abs).
+	| az2 | := (az * az).
+        | hairy | := ((((az2 - 1) * (az2 - 1)) + (4 * y * y)) sqrt).
+	^Cpx real: (1/2 * (x signum) * ((hairy - az2) acos))
+	imaginary: (1/2 * (x signum) * ((hairy + az2) acosh))
+  ]
+
+  Method class: Cpx [
+  acos
+	| x | := real.
+	| y | := imaginary.
+	^Cpx real: ((x cos) * (y cosh)) imaginary: (- ((x sin) * (y sinh)))
+  ]
+
+  Method class: Cpx [
+  atan
+	| x2 | := (real * 2).
+	| y2 | := (imaginary * 2).
+	^Cpx real: ((x2 sin) / ((x2 cos) + (y2 cosh)))
+	imaginary: ((y2 tanh) / (1 + ((x2 cos) / (y2 cosh))))
+  ]
+
+
+
+[
+  stdout cr << 'Complex'.
+  stdout cr << '3.2i prints as: ' << 3.2i.
+  | a | := Cpx real: 1/2 imaginary: 2.1 .
+  | b | := Cpx real: 3/4 imaginary: 5.7 .
+  stdout cr << '     a = ' << a.
+  stdout cr << '     b = ' << b.
+  stdout cr << ' a + b = ' << (a + b).
+  stdout cr << ' a - b = ' << (a - b).
+  stdout cr << ' a * b = ' << (a * b).
+  stdout cr << ' a / b = ' << (a / b).
+  stdout cr << 'sin(a) = ' << (a sin).
+  stdout cr << 'cos(a) = ' << (a cos).
+  stdout cr << 'tan(a) = ' << (a tan).
+  stdout cr << 'exp(a) = ' << (a exp).
+/*  stdout cr << 'asin(sin(a)) = ' << ((a sin) asin). */
+  stdout cr << 'conjugate(a) = ' << (a conjugate).
+  stdout cr << '  inverse(a) = ' << (a inverse).
+  stdout cr << '     norm(a) = ' << (a norm).
+  stdout cr << '  abs(a - b) = ' << ((a - b) abs).
+  stdout cr << ' norm(a - b) = ' << ((a - b) norm).
+]
+
+}

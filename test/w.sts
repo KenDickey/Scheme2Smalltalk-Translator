@@ -1,0 +1,82 @@
+include path: ProtoScheme.sts.
+include path: trace.sts.
+[
+
+/*
+stdout cr << ((R5RS.Scheme globalRef: #'trace')
+      value: #'assq'
+      value: (R5RS.Scheme globalRef: #'assq')).
+
+ stdout cr << '(assq 1 ''(0 1 2 3)) '.
+ stdout << ((R5RS.Scheme globalRef:  #'assq') 
+	value: 1 value: ({{0. #zero.}. {1. #one}. {2. 2.}. {3. 3.}.} asPair)).
+ stdout cr << '(assq 1 ''()) '.
+ stdout << ((R5RS.Scheme globalRef:  #'assq') 
+	value: 1 value: nil).
+
+stdout cr << ((R5RS.Scheme globalRef: #'untrace')
+      value: #'assq').
+*/
+
+ ((R5RS.Scheme globalRef: #'trace')
+      value: #'consume-comment'
+      value: (R5RS.Scheme globalRef: #'consume-comment')).
+
+ ((R5RS.Scheme globalRef: #'trace')
+      value: #'read-sharp-thingie'
+      value: (R5RS.Scheme globalRef: #'read-sharp-thingie')).
+
+ ((R5RS.Scheme globalRef: #'trace')
+      value: #'read-character'
+      value: (R5RS.Scheme globalRef: #'read-character')).
+
+ ((R5RS.Scheme globalRef: #'trace')
+      value: #'read-number'
+      value: (R5RS.Scheme globalRef: #'read-number')).
+
+ ((R5RS.Scheme globalRef: #'trace')
+      value: #'read-identifier'
+      value: (R5RS.Scheme globalRef: #'read-identifier')).
+
+ ((R5RS.Scheme globalRef: #'trace')
+      value: #'read-abbreviation'
+      value: (R5RS.Scheme globalRef: #'read-abbreviation')).
+
+ ((R5RS.Scheme globalRef: #'trace')
+      value: #'read-string'
+      value: (R5RS.Scheme globalRef: #'read-string')).
+
+ ((R5RS.Scheme globalRef: #'trace')
+      value: #'read-pecular'
+      value: (R5RS.Scheme globalRef: #'read-pecular')).
+
+ ((R5RS.Scheme globalRef: #'trace')
+      value: #'read-vector'
+      value: (R5RS.Scheme globalRef: #'read-vector')).
+
+ ((R5RS.Scheme globalRef: #'trace')
+      value: #'read-list'
+      value: (R5RS.Scheme globalRef: #'read-list')).
+/*
+ ((R5RS.Scheme globalRef: #'trace')
+      value: #'read-char'
+      value: (R5RS.Scheme globalRef: #'read-char')).
+*/
+/*
+stdout cr << ((R5RS.Scheme globalRef: #'trace')
+      value: #'peek-char'
+      value: (R5RS.Scheme globalRef: #'peek-char')).
+*/
+/*
+stdout cr << ((R5RS.Scheme globalRef: #'trace')
+      value: #'identifier-subsequent-char?'
+      value: (R5RS.Scheme globalRef: #'identifier-subsequent-char?')).
+*/
+/*
+((R5RS.Scheme globalRef:  #'debug-read')
+      value: ( 'D:/SmallScript/ProtoScheme/SCM/bootstrap.scm'))
+*/
+((R5RS.Scheme globalRef:  #'debug-read')
+      value: ( 'D:/SmallScript/ProtoScheme/OUT/xxx.scm')).
+
+]

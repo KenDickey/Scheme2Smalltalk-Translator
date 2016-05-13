@@ -1,0 +1,594 @@
+
+"Translated from file D:/SmallScript/ProtoScheme/xlateTests.scm"
+
+include path: ProtoScheme.sts.
+[
+ | scheme | := R5RS.Scheme new; initialize.
+
+
+/* (define a 3) */
+
+ scheme define:  #'a'
+  as:  3.
+
+/* (define b (+ a 5)) */
+
+ scheme define:  #'b'
+  as: ((scheme globalRef:  #'+')
+            value: ( (scheme globalRef:  #'a')
+           ) value: ( 5)).
+
+/* (define (f x) 3) */
+
+ scheme define:  #'f'
+  as: 
+       [ :x |  3.].
+
+/* (define (g x) (+ x 1)) */
+
+ scheme define:  #'g'
+  as: 
+       [ :x | ((scheme globalRef:  #'+')
+                value: ( x) value: ( 1)).].
+
+/* (define (h x y) (* x (+ y b))) */
+
+ scheme define:  #'h'
+  as: 
+       [ :x :y | ((scheme globalRef:  #'*')
+                value: ( x) value: (((scheme globalRef:  #'+')
+                value: ( y) value: ( (scheme globalRef:  #'b')
+               )))).].
+
+/* (display "(h 2 3) is ") */
+((scheme globalRef:  #'display')
+      value: ( '(h 2 3) is ')).
+
+/* (display (h 2 3)) */
+((scheme globalRef:  #'display')
+      value: (((scheme globalRef:  #'h')
+      value: ( 2) value: ( 3)))).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (let ((a 1) (b 2)) (display "(let ((a 1)(b 2))(+ a b)) is ") (display (+ a b))) */
+ [ :a :b | 
+      [
+       ((scheme globalRef:  #'display')
+            value: ( '(let ((a 1)(b 2))(+ a b)) is ')).
+       ((scheme globalRef:  #'display')
+            value: (((scheme globalRef:  #'+')
+            value: ( a) value: ( b)))).
+      ] value..
+ ]( 1 , 2).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (let loop ((n 5) (a 1)) (display "n a = ") (display n) (display " ") (display a) (newline) (if (< n 2) (display a) (loop (- n 1) (* n a)))) */
+
+  [ | loop | := 
+     [ :n :a | 
+      [
+       ((scheme globalRef:  #'display')
+            value: ( 'n a = ')).
+       ((scheme globalRef:  #'display')
+            value: ( n)).
+       ((scheme globalRef:  #'display')
+            value: ( ' ')).
+       ((scheme globalRef:  #'display')
+            value: ( a)).
+       ((scheme globalRef:  #'newline')
+            value).
+        (if (((scheme globalRef:  #'<')
+                value: ( n) value: ( 2)))
+            then [((scheme globalRef:  #'display')
+                value: ( a))]
+            else [(loop value: (((scheme globalRef:  #'-')
+                value: ( n) value: ( 1))) value: (((scheme globalRef:  #'*')
+                value: ( n) value: ( a))))]).
+      ] value.
+ ].
+ loop valueWithArguments: {
+      5. 
+      1. } ] value.
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (define (fact n) (let loop ((n n) (a 1)) (if (< n 2) a (loop (- n 1) (* n a))))) */
+
+ scheme define:  #'fact'
+  as: 
+       [ :n | 
+            [ | loop | := 
+               [ :n :a | 
+                (if (((scheme globalRef:  #'<')
+                        value: ( n) value: ( 2)))
+                    then [ a]
+                    else [(loop value: (((scheme globalRef:  #'-')
+                        value: ( n) value: ( 1))) value: (((scheme globalRef:  #'*')
+                        value: ( n) value: ( a))))])
+           ].
+           loop valueWithArguments: {
+                n. 
+                1. } ] value.].
+
+/* (display "fact 50 is ") */
+((scheme globalRef:  #'display')
+      value: ( 'fact 50 is ')).
+
+/* (display (fact 50)) */
+((scheme globalRef:  #'display')
+      value: (((scheme globalRef:  #'fact')
+      value: ( 50)))).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (display "a is ") */
+((scheme globalRef:  #'display')
+      value: ( 'a is ')).
+
+/* (display a) */
+((scheme globalRef:  #'display')
+      value: ( (scheme globalRef:  #'a')
+     )).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (display "b is ") */
+((scheme globalRef:  #'display')
+      value: ( 'b is ')).
+
+/* (display b) */
+((scheme globalRef:  #'display')
+      value: ( (scheme globalRef:  #'b')
+     )).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (let* ((a b) (b (+ a 1))) (display "(let* ((a b)(b (+ a 1)))(+ a b)) is ") (display (+ a b))) */
+
+ [ :a | 
+   [ :b | 
+      [
+       ((scheme globalRef:  #'display')
+            value: ( '(let* ((a b)(b (+ a 1)))(+ a b)) is ')).
+       ((scheme globalRef:  #'display')
+            value: (((scheme globalRef:  #'+')
+            value: ( a) value: ( b)))).
+      ] value.
+   ](((scheme globalRef:  #'+')
+        value: ( a) value: ( 1)))
+ ]( (scheme globalRef:  #'b')
+     ).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (letrec ((even (lambda (n) (if (= n 0) #t (odd (- n 1))))) (odd (lambda (n) (if (= n 0) #f (even (- n 1)))))) (display "(even 7) is ") (display (even 7)) (newline) (display "(odd 17) is ") (display (odd 17))) */
+
+  [ :even :odd | 
+   even := (
+   [ :n |  (if (((scheme globalRef:  #'=')
+                value: ( n) value: ( 0)))
+            then [ true]
+            else [(odd value: (((scheme globalRef:  #'-')
+                value: ( n) value: ( 1))))]).]).
+   odd := (
+   [ :n |  (if (((scheme globalRef:  #'=')
+                value: ( n) value: ( 0)))
+            then [ false]
+            else [(even value: (((scheme globalRef:  #'-')
+                value: ( n) value: ( 1))))]).]).
+      [
+       ((scheme globalRef:  #'display')
+            value: ( '(even 7) is ')).
+       ((scheme globalRef:  #'display')
+            value: ((even value: ( 7)))).
+       ((scheme globalRef:  #'newline')
+            value).
+       ((scheme globalRef:  #'display')
+            value: ( '(odd 17) is ')).
+       ((scheme globalRef:  #'display')
+            value: ((odd value: ( 17)))).
+      ] value..
+ ] value..
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (cond ((eqv? #t #f) (error "true is false?!?")) ((= 1 2) (error "1 is 2 ?!?")) (else (display "cond1-ok"))) */
+ (if (((scheme globalRef:  #'eqv?')
+          value: ( true) value: ( false)))
+      then [((scheme globalRef:  #'error')
+          value: ( 'true is false?!?'))]
+      else [ (if (((scheme globalRef:  #'=')
+              value: ( 1) value: ( 2)))
+          then [((scheme globalRef:  #'error')
+              value: ( '1 is 2 ?!?'))]
+          else [((scheme globalRef:  #'display')
+              value: ( 'cond1-ok'))])]).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (cond ((eqv? #t #f) (error "true is false?!?")) ((= 1 2) (error "1 is 2 ?!?")) ((= (fact 5) 120) (display "cond2-ok")) (else (error "cond fell off end"))) */
+ (if (((scheme globalRef:  #'eqv?')
+          value: ( true) value: ( false)))
+      then [((scheme globalRef:  #'error')
+          value: ( 'true is false?!?'))]
+      else [ (if (((scheme globalRef:  #'=')
+              value: ( 1) value: ( 2)))
+          then [((scheme globalRef:  #'error')
+              value: ( '1 is 2 ?!?'))]
+          else [ (if (((scheme globalRef:  #'=')
+                  value: (((scheme globalRef:  #'fact')
+                  value: ( 5))) value: ( 120)))
+              then [((scheme globalRef:  #'display')
+                  value: ( 'cond2-ok'))]
+              else [((scheme globalRef:  #'error')
+                  value: ( 'cond fell off end'))])])]).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (display "b is ") */
+((scheme globalRef:  #'display')
+      value: ( 'b is ')).
+
+/* (display b) */
+((scheme globalRef:  #'display')
+      value: ( (scheme globalRef:  #'b')
+     )).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (display "(set! b 'sym)") */
+((scheme globalRef:  #'display')
+      value: ( '(set! b ''sym)')).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (set! b 'sym) */
+(scheme setBang:  #'b' as:  #'sym').
+
+/* (display "b is ") */
+((scheme globalRef:  #'display')
+      value: ( 'b is ')).
+
+/* (write b) */
+((scheme globalRef:  #'write')
+      value: ( (scheme globalRef:  #'b')
+     )).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (display "a should be 3, is: ") */
+((scheme globalRef:  #'display')
+      value: ( 'a should be 3, is: ')).
+
+/* (let ((a 5)) (if (> a 1) (set! a 3)) (display a)) */
+ [ :a | 
+      [
+        (if (((scheme globalRef:  #'>')
+                value: ( a) value: ( 1)))
+            then [(a :=  3)]).
+       ((scheme globalRef:  #'display')
+            value: ( a)).
+      ] value..
+ ]( 5).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (: (current-output-port) << "Hello from" << " Smallscript!") */
+ (((scheme globalRef:  #'current-output-port')
+      value) << 'Hello from' << ' Smallscript!').
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (display (: "Hello again" "asString")) */
+((scheme globalRef:  #'display')
+      value: ( ( 'Hello again' asString))).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (define (cons a b) (: ($ "Pair") car: a cdr: b)) */
+
+ scheme define:  #'cons'
+  as: 
+       [ :a :b |  ( Pair car: a cdr: b).].
+
+/* (define (car c) (: c car)) */
+
+ scheme define:  #'car'
+  as: 
+       [ :c |  ( c car).].
+
+/* (define (cdr c) (: c cdr)) */
+
+ scheme define:  #'cdr'
+  as: 
+       [ :c |  ( c cdr).].
+
+/* (display "(list #\\c \"str\" () #t 'sym 34 (a b (c) d)) is ") */
+((scheme globalRef:  #'display')
+      value: ( '(list #\c "str" () #t ''sym 34 (a b (c) d)) is ')).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (display "      ") */
+((scheme globalRef:  #'display')
+      value: ( '      ')).
+
+/* (display (list #\c "str" '() #t 'sym 34 '(a b (c) d))) */
+((scheme globalRef:  #'display')
+      value: (((scheme globalRef:  #'cons')
+      value: ( $c) value: (((scheme globalRef:  #'cons')
+      value: ( 'str') value: (((scheme globalRef:  #'cons')
+      value: ( nil) value: (((scheme globalRef:  #'cons')
+      value: ( true) value: (((scheme globalRef:  #'cons')
+      value: ( #'sym') value: (((scheme globalRef:  #'cons')
+      value: ( 34) value: (((scheme globalRef:  #'cons')
+      value: ( ({ #'a'.  #'b'.  ({ #'c'. } asPair).  #'d'. } asPair)) value: ( nil)))))))))))))))).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (define count 0) */
+
+ scheme define:  #'count'
+  as:  0.
+
+/* (define p (delay (begin (set! count (+ count 1)) (if (> count x) count (force p))))) */
+
+ scheme define:  #'p'
+  as: ((scheme globalRef:  #'make-promise')
+            value: (
+       [ [
+             (scheme setBang:  #'count' as: ((scheme globalRef:  #'+')
+                  value: ( (scheme globalRef:  #'count')
+                 ) value: ( 1))).
+              (if (((scheme globalRef:  #'>')
+                      value: ( (scheme globalRef:  #'count')
+                     ) value: ( (scheme globalRef:  #'x')
+                     )))
+                  then [ (scheme globalRef:  #'count')
+                     ]
+                  else [((scheme globalRef:  #'force')
+                      value: ( (scheme globalRef:  #'p')
+                     ))]).
+            ] value..])).
+
+/* (define x 5) */
+
+ scheme define:  #'x'
+  as:  5.
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (display "should show 6 and 6") */
+((scheme globalRef:  #'display')
+      value: ( 'should show 6 and 6')).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (display p) */
+((scheme globalRef:  #'display')
+      value: ( (scheme globalRef:  #'p')
+     )).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (display (force p)) */
+((scheme globalRef:  #'display')
+      value: (((scheme globalRef:  #'force')
+      value: ( (scheme globalRef:  #'p')
+     )))).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (display p) */
+((scheme globalRef:  #'display')
+      value: ( (scheme globalRef:  #'p')
+     )).
+
+/* (begin (newline) (set! x 10) (display (force p))) */
+ [
+   ((scheme globalRef:  #'newline')
+        value).
+   (scheme setBang:  #'x' as:  10).
+   ((scheme globalRef:  #'display')
+        value: (((scheme globalRef:  #'force')
+        value: ( (scheme globalRef:  #'p')
+       )))).
+  ] value..
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (display "expected: neither, got: ") */
+((scheme globalRef:  #'display')
+      value: ( 'expected: neither, got: ')).
+
+/* (display (let ((x 0)) (cond ((< x 0) 'negative) ((> x 0) 'positive) (else 'neither)))) */
+((scheme globalRef:  #'display')
+      value: ( [ :x | 
+      (if (((scheme globalRef:  #'<')
+              value: ( x) value: ( 0)))
+          then [ #'negative']
+          else [ (if (((scheme globalRef:  #'>')
+                  value: ( x) value: ( 0)))
+              then [ #'positive']
+              else [ #'neither'])]).
+ ]( 0))).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (display "expected: composit, got: ") */
+((scheme globalRef:  #'display')
+      value: ( 'expected: composit, got: ')).
+
+/* (display (case (* 2 3) ((2 3 5 7) 'prime) ((1 4 6 8 9) 'composit))) */
+((scheme globalRef:  #'display')
+      value: ( [ :key197 | 
+      (if (((scheme globalRef:  #'memv')
+              value: ( key197) value: ( ({ 2.  3.  5.  7. } asPair))))
+          then [ #'prime']
+          else [ [ :key198 | 
+              (if (((scheme globalRef:  #'memv')
+                      value: ( key198) value: ( ({ 1.  4.  6.  8.  9. } asPair))))
+                  then [ #'composit']
+                  else [ key198]).
+         ]( key197)]).
+ ](((scheme globalRef:  #'*')
+          value: ( 2) value: ( 3))))).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (display "expected: consonant, got: ") */
+((scheme globalRef:  #'display')
+      value: ( 'expected: consonant, got: ')).
+
+/* (display (case (car '(c d)) ((a e i o u) 'vowel) ((w y) 'semivowel) (else 'consonant))) */
+((scheme globalRef:  #'display')
+      value: ( [ :key199 | 
+      (if (((scheme globalRef:  #'memv')
+              value: ( key199) value: ( ({ #'a'.  #'e'.  #'i'.  #'o'.  #'u'. } asPair))))
+          then [ #'vowel']
+          else [ [ :key200 | 
+              (if (((scheme globalRef:  #'memv')
+                      value: ( key200) value: ( ({ #'w'.  #'y'. } asPair))))
+                  then [ #'semivowel']
+                  else [ [
+                    key200.
+                    #'consonant'.
+                  ] value.]).
+         ]( key199)]).
+ ](((scheme globalRef:  #'car')
+          value: ( ({ #'c'.  #'d'. } asPair)))))).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (display "expected: 2, got: ") */
+((scheme globalRef:  #'display')
+      value: ( 'expected: 2, got: ')).
+
+/* (display (cond ((assv 'b '((a 1) (b 2))) => cadr) (else #f))) */
+((scheme globalRef:  #'display')
+      value: ( [ :result201 | 
+      (if ( result201)
+          then [((scheme globalRef:  #'cadr')
+              value: ( result201))]
+          else [ false]).
+ ](((scheme globalRef:  #'assv')
+          value: ( #'b') value: ( ({ ({ #'a'.  1. } asPair).  ({ #'b'.  2. } asPair). } asPair)))))).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (display "expected: 25, got: ") */
+((scheme globalRef:  #'display')
+      value: ( 'expected: 25, got: ')).
+
+/* (display (let ((x '(1 3 5 7 9))) (do ((x x (cdr x)) (sum 0 (+ sum (car x)))) ((null? x) sum)))) */
+((scheme globalRef:  #'display')
+      value: ( [ :x | 
+     
+      [ | doX2Dloop202 | := 
+         [ :x :sum | 
+          (if (((scheme globalRef:  #'null?')
+                  value: ( x)))
+              then [ sum]
+              else [(doX2Dloop202 value: (((scheme globalRef:  #'cdr')
+                  value: ( x))) value: (((scheme globalRef:  #'+')
+                  value: ( sum) value: (((scheme globalRef:  #'car')
+                  value: ( x))))))])
+     ].
+     doX2Dloop202 valueWithArguments: {
+          x. 
+          0. } ] value.
+ ]( ({ 1.  3.  5.  7.  9. } asPair)))).
+
+/* (newline) */
+((scheme globalRef:  #'newline')
+      value).
+
+/* (display "expected: #(0 1 2 3 4), got: ") */
+((scheme globalRef:  #'display')
+      value: ( 'expected: #(0 1 2 3 4), got: ')).
+
+/* (display (do ((vec (make-vector 5)) (idx 0 (+ idx 1))) ((= idx 5) vec) (vector-set! vec idx idx))) */
+((scheme globalRef:  #'display')
+      value: (
+  [ | doX2Dloop203 | := 
+     [ :vec :idx | 
+      (if (((scheme globalRef:  #'=')
+              value: ( idx) value: ( 5)))
+          then [ vec]
+          else [ [
+           ((scheme globalRef:  #'vector-set!')
+                value: ( vec) value: ( idx) value: ( idx)).
+           (doX2Dloop203 value: ( vec) value: (((scheme globalRef:  #'+')
+                value: ( idx) value: ( 1)))).
+          ] value.])
+ ].
+ doX2Dloop203 valueWithArguments: {
+     ((scheme globalRef:  #'make-vector')
+          value: ( 5)). 
+      0. } ] value)).
+
+/* #t */
+ true.
+
+]
+"--- E O F ---"

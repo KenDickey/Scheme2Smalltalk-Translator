@@ -1,0 +1,58 @@
+"Testing"
+Module name: Foo.
+
+Function behavior: Foo {
+Initialize
+    AMLCompiler eval: 'Class ref-name: Complex
+              add:fields: real, imaginary'.
+}
+
+Class ref-name: Complex
+	 add:fields: real, imaginary.
+
+Method class: Complex [
+real
+	^real
+]
+
+Method class: Complex [
+imaginary
+	^imaginary
+]
+
+Method class: Complex [
+real: rVal
+	real := rVal.
+	^self
+]
+
+Method class: Complex [
+imaginary: iVal
+	imaginary := iVal.
+	^self.
+]
+
+Method class: Complex [
+asString
+      ^(if (imaginary = 0)
+	then [real asString]
+	else if (real = 0)
+	then [(imaginary asString), 'i']
+	else if (imaginary < 0)
+	then [(real asString), (imaginary asString), 'i']
+	else [(real asString), '+', (imaginary asString), 'i'])
+]
+
+[
+  stdout cr << ((1/2 asComplex) real).
+  stdout cr << ((1/2 asComplex) imaginary).
+  Complex allFieldsDo: [:f|stdout cr << f].
+  | c | := Complex new.
+  c real: 1/2; imaginary: 2.3. 
+  stdout cr << (c real).
+  stdout cr << (c imaginary).
+  stdout cr << c.
+  true.
+]
+
+"  --- E O F --- "

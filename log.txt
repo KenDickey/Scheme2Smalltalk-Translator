@@ -1,0 +1,41 @@
+28 November 2001 -- started ProtoScheme.sts
+also SchemeString.sts -- asSchemeString (display), asSchemeObjString (write).
+...
+30 November 2001 -- started Pair.sts -- Scheme Lists (cons/pair).
+...
+05 December 2001 -- xlate.scm started Scheme->Smalltalk translator (in Scheme).
+...		    Let, Let*, Letrec, ..
+ 8 December 2001 -- Did : and $ loopholes to allow Smalltalk 
+			access from Scheme.
+                    ProtoBasic.scm; did much R5RS lib in Scheme 
+			with : and $ loopholes.
+ 9 December 2001 -- ProtoBasic up.  Scheme->Smalltalk identifier mappings.
+10 December 2001 -- do, case, delay, '=> in cond.
+14 December 2001 -- read
+16 December 2001 -- quasiquote
+17 December 2001 -- dynamic-define, dynamic-let, dynamic-set!, dynamic-ref.
+18 December 2001 -- rest args; file & port funs.
+19 December 2001 -- implemented r5rs standard funs which required rest args.
+		    2 arg atan, etc.
+21 December 2001 -- Number reader for integer, rational, real (complex NYI).
+22 December 2001 -- Complex reader.
+23 December 2001 -- Number<->string code reorg & completion 
+		    (can't test; SS bug).
+24 December 2001 -- Environment/Namespace testing & completion.
+26 December 2001 -- misc bugfixes.
+27 December 2001 -- Internal defines -> letrec.
+28 December 2001 -- Broke up test.scm into a number of files.  Misc bugfixes.
+30 December 2001 -- Pass most non-numeric R5RS tests (SS holes).
+ 2 January  2002 -- Switched to varArgs for rests.
+ 5 January  2002 -- Added case-lambda
+ 9 January  2002 -- Read works.
+22 January  2002 -- Added #'casePreservingSym to read.
+26 January  2002 -- Removed LIST "macro" from xlate.scm (use nary LIST fn).
+11 February 2002 -- Completed SmallScript Complex number functions.
+10 May      2002 -- Squeak: Pairs/lists implemented and working.
+13 May      2002 -- Squeak: Complex numbers working.
+ 6 June     2002 -- Runs most of R5RS Scheme test suite (Squeak).
+13 June     2002 -- Successful bootstrap! (translated self translates self!)
+
+
+                            --- E O F ---

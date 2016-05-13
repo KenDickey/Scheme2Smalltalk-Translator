@@ -1,0 +1,53 @@
+
+"Translated from file D:/SmallScript/ProtoScheme/Work/dynamicsTest.scm"
+
+include path: ProtoScheme.sts.
+[
+
+/* (dynamic-define radix 10) */
+
+ SchemeAccess.Scheme dynamicDefine: #radix
+  as:  10.
+
+/* (define (f x) (+ x (dynamic-ref radix))) */
+
+ SchemeAccess.Scheme define:  #'f'
+  as: 
+       [ :x | ((SchemeAccess.Scheme globalRef:  #'+')
+                value: ( x) value: ((SchemeAccess.Scheme dynamicRef: #radix)))].
+
+/* (define (test-it expected) (display "expect ") (display (+ 100 expected)) (display " got: ") (display (f 100)) (newline)) */
+
+ SchemeAccess.Scheme define:  #'test-it'
+  as: 
+       [ :expected | ((SchemeAccess.Scheme globalRef:  #'display')
+                value: ( 'expect '))((SchemeAccess.Scheme globalRef:  #'display')
+                value: (((SchemeAccess.Scheme globalRef:  #'+')
+                value: ( 100) value: ( expected))))((SchemeAccess.Scheme globalRef:  #'display')
+                value: ( ' got: '))((SchemeAccess.Scheme globalRef:  #'display')
+                value: (((SchemeAccess.Scheme globalRef:  #'f')
+                value: ( 100))))((SchemeAccess.Scheme globalRef:  #'newline')
+                value)].
+
+/* (test-it 10) */
+((SchemeAccess.Scheme globalRef:  #'test-it')
+      value: ( 10)).
+
+/* (dynamic-let ((radix 2)) (test-it 2) (dynamic-set! radix 3) (test-it 3)) */
+ [
+   SchemeAccess.Scheme dynamicPush: #radix as:  2.
+   ((SchemeAccess.Scheme globalRef:  #'test-it')
+        value: ( 2)).
+   (SchemeAccess.Scheme dynamicSetBang: #radix as:  3).
+   ((SchemeAccess.Scheme globalRef:  #'test-it')
+        value: ( 3)).
+ ] ensure: [
+   SchemeAccess.Scheme dynamicPop: #radix.].
+.
+
+/* (test-it 10) */
+((SchemeAccess.Scheme globalRef:  #'test-it')
+      value: ( 10)).
+
+]
+"--- E O F ---"

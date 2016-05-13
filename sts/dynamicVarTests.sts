@@ -1,0 +1,26 @@
+"dynamicVarTests.sts"
+
+include path: 'ProtoScheme.sts'.
+[
+
+stdout cr << 'dynamicDefine #foo as: 5'.
+R5RS.Scheme dynamicDefine: #foo as: 5.
+stdout cr << 'Dynamic value of #foo is ' 
+	  << ((R5RS.Scheme dynamicRef: #foo) asSchemeObjString).
+
+stdout cr << 'dynamicPush: #foo as: #five'.
+R5RS.Scheme dynamicPush: #foo as: #five.
+stdout cr << 'Dynamic value of #foo is ' 
+	  << ((R5RS.Scheme dynamicRef: #foo) asSchemeObjString).
+
+stdout cr << 'dynamicSet!: #foo as: ''Five'''.
+R5RS.Scheme dynamicSetX21: #foo as: 'Five'.
+stdout cr << 'Dynamic value of #foo is ' 
+	  << ((R5RS.Scheme dynamicRef: #foo) asSchemeObjString).
+
+stdout cr << 'dynamicPop: #foo'.
+R5RS.Scheme dynamicPop: #foo.
+stdout cr << 'Dynamic value of #foo is ' 
+	  << ((R5RS.Scheme dynamicRef: #foo) asSchemeObjString).
+
+]

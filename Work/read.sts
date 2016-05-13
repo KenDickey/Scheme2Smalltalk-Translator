@@ -1,0 +1,792 @@
+
+"Translated from file D:/SmallScript/ProtoScheme/Work/read.scm"
+
+include path: ProtoScheme.sts.
+[
+
+/* (define whitespace '(#\space #\newline)) */
+
+ SchemeAccess.Scheme define:  #'whitespace'
+  as:  ({ $ .  $
+. } asPair).
+
+/* (define delimiters (append (list #\( #\) #\" #\;) whitespace)) */
+
+ SchemeAccess.Scheme define:  #'delimiters'
+  as: ((SchemeAccess.Scheme globalRef:  #'append')
+            value: (((SchemeAccess.Scheme globalRef:  #'cons')
+            value: ( $() value: (((SchemeAccess.Scheme globalRef:  #'cons')
+            value: ( $)) value: (((SchemeAccess.Scheme globalRef:  #'cons')
+            value: ( $") value: (((SchemeAccess.Scheme globalRef:  #'cons')
+            value: ( $;) value: ( nil))))))))) value: ( (SchemeAccess.Scheme globalRef:  #'whitespace')
+           )).
+
+/* (define special-initial-chars '"!$%&/:*<=>?^_~") */
+
+ SchemeAccess.Scheme define:  #'special-initial-chars'
+  as:  '!$%&/:*<=>?^_~'.
+
+/* (define special-initials (string->list special-initial-chars)) */
+
+ SchemeAccess.Scheme define:  #'special-initials'
+  as: ((SchemeAccess.Scheme globalRef:  #'string->list')
+            value: ( (SchemeAccess.Scheme globalRef:  #'special-initial-chars')
+           )).
+
+/* (define special-subsequent-chars '"+-.@") */
+
+ SchemeAccess.Scheme define:  #'special-subsequent-chars'
+  as:  '+-.@'.
+
+/* (define pecular-identifier '(+ - ...)) */
+
+ SchemeAccess.Scheme define:  #'pecular-identifier'
+  as:  ({ #'+'.  #'-'.  #'...'. } asPair).
+
+/* (define pecular-initials '(#\+ #\- #\.)) */
+
+ SchemeAccess.Scheme define:  #'pecular-initials'
+  as:  ({ $+.  $-.  $.. } asPair).
+
+/* (define syntactic-keywords '(else => define . ,unquote-splicing)) */
+
+ SchemeAccess.Scheme define:  #'syntactic-keywords'
+  as:  ({ #'else'.  #'=>'.  #'define'.  #'unquote'.  #'unquote-splicing'. } asPair).
+
+/* (define expression-keywords '(quote lambda if set! begin cond and or case let let* letrec do delay quasiquote)) */
+
+ SchemeAccess.Scheme define:  #'expression-keywords'
+  as:  ({ #'quote'.  #'lambda'.  #'if'.  #'set!'.  #'begin'.  #'cond'.  #'and'.  #'or'.  #'case'.  #'let'.  #'let*'.  #'letrec'.  #'do'.  #'delay'.  #'quasiquote'. } asPair).
+
+/* (define character-names-alist (list (cons 'space #\space) (cons 'newline #\newline))) */
+
+ SchemeAccess.Scheme define:  #'character-names-alist'
+  as: ((SchemeAccess.Scheme globalRef:  #'cons')
+            value: (((SchemeAccess.Scheme globalRef:  #'cons')
+            value: ( #'space') value: ( $ ))) value: (((SchemeAccess.Scheme globalRef:  #'cons')
+            value: (((SchemeAccess.Scheme globalRef:  #'cons')
+            value: ( #'newline') value: ( $
+))) value: ( nil)))).
+
+/* (define token-classes '(identifier boolean number character string lparen rparen sharp-lparen quote backquote comma comma-splice period)) */
+
+ SchemeAccess.Scheme define:  #'token-classes'
+  as:  ({ #'identifier'.  #'boolean'.  #'number'.  #'character'.  #'string'.  #'lparen'.  #'rparen'.  #'sharp-lparen'.  #'quote'.  #'backquote'.  #'comma'.  #'comma-splice'.  #'period'. } asPair).
+
+/* (define abbreviation-starts '(#\, #\' #\`)) */
+
+ SchemeAccess.Scheme define:  #'abbreviation-starts'
+  as:  ({ $,.  $'.  $`. } asPair).
+
+/* (define radix-chars '"bodx") */
+
+ SchemeAccess.Scheme define:  #'radix-chars'
+  as:  'bodx'.
+
+/* (define exactness-chars '"ie") */
+
+ SchemeAccess.Scheme define:  #'exactness-chars'
+  as:  'ie'.
+
+/* (define letter-chars '"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") */
+
+ SchemeAccess.Scheme define:  #'letter-chars'
+  as:  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.
+
+/* (define digit-chars '"0123456789") */
+
+ SchemeAccess.Scheme define:  #'digit-chars'
+  as:  '0123456789'.
+
+/* (define num-2-chars '"01") */
+
+ SchemeAccess.Scheme define:  #'num-2-chars'
+  as:  '01'.
+
+/* (define num-8-chars '"01234567") */
+
+ SchemeAccess.Scheme define:  #'num-8-chars'
+  as:  '01234567'.
+
+/* (define num-10-chars digit-chars) */
+
+ SchemeAccess.Scheme define:  #'num-10-chars'
+  as:  (SchemeAccess.Scheme globalRef:  #'digit-chars')
+           .
+
+/* (define num-16-chars '"01234567689abcdefABCDEF") */
+
+ SchemeAccess.Scheme define:  #'num-16-chars'
+  as:  '01234567689abcdefABCDEF'.
+
+/* (define exponent-marker-chars '"esfdl") */
+
+ SchemeAccess.Scheme define:  #'exponent-marker-chars'
+  as:  'esfdl'.
+
+/* (define sign-chars '"+-") */
+
+ SchemeAccess.Scheme define:  #'sign-chars'
+  as:  '+-'.
+
+/* (define legal-number-chars-list (append (string->list sign-chars) (string->list num-16-chars) (string->list exponent-marker-chars) (string->list radix-chars) (string->list exactness-chars) (list #\. #\# #\@ #\/))) */
+
+ SchemeAccess.Scheme define:  #'legal-number-chars-list'
+  as: ((SchemeAccess.Scheme globalRef:  #'append')
+           
+        valueWithArguments: { ((SchemeAccess.Scheme globalRef:  #'string->list')
+            value: ( (SchemeAccess.Scheme globalRef:  #'sign-chars')
+           )). ((SchemeAccess.Scheme globalRef:  #'string->list')
+            value: ( (SchemeAccess.Scheme globalRef:  #'num-16-chars')
+           )). ((SchemeAccess.Scheme globalRef:  #'string->list')
+            value: ( (SchemeAccess.Scheme globalRef:  #'exponent-marker-chars')
+           )). ((SchemeAccess.Scheme globalRef:  #'string->list')
+            value: ( (SchemeAccess.Scheme globalRef:  #'radix-chars')
+           )). ((SchemeAccess.Scheme globalRef:  #'string->list')
+            value: ( (SchemeAccess.Scheme globalRef:  #'exactness-chars')
+           )). ((SchemeAccess.Scheme globalRef:  #'cons')
+            value: ( $.) value: (((SchemeAccess.Scheme globalRef:  #'cons')
+            value: ( $#) value: (((SchemeAccess.Scheme globalRef:  #'cons')
+            value: ( $@) value: (((SchemeAccess.Scheme globalRef:  #'cons')
+            value: ( $/) value: ( nil)))))))).}).
+
+/* (define subsequents (append (string->list letter-chars) (string->list digit-chars) special-initials (string->list special-subsequent-chars))) */
+
+ SchemeAccess.Scheme define:  #'subsequents'
+  as: ((SchemeAccess.Scheme globalRef:  #'append')
+           
+        valueWithArguments: { ((SchemeAccess.Scheme globalRef:  #'string->list')
+            value: ( (SchemeAccess.Scheme globalRef:  #'letter-chars')
+           )). ((SchemeAccess.Scheme globalRef:  #'string->list')
+            value: ( (SchemeAccess.Scheme globalRef:  #'digit-chars')
+           )).  (SchemeAccess.Scheme globalRef:  #'special-initials')
+           . ((SchemeAccess.Scheme globalRef:  #'string->list')
+            value: ( (SchemeAccess.Scheme globalRef:  #'special-subsequent-chars')
+           )).}).
+
+/* (define rparen-marker ")") */
+
+ SchemeAccess.Scheme define:  #'rparen-marker'
+  as:  ')'.
+
+/* (define period-marker ".") */
+
+ SchemeAccess.Scheme define:  #'period-marker'
+  as:  '.'.
+
+/* (define (read . port) (read1 (if (null? port) (current-input-port) (car port)))) */
+
+ SchemeAccess.Scheme define:  #'read'
+  as: 
+       [
+           | port | := List new.
+             thisBlock.arity+1 to: thisContext.contextArity do: 
+                 [:idx| port add: (thisContext.contextArgAt(idx))].
+           port := (port asPair).
+           ((SchemeAccess.Scheme globalRef:  #'read1')
+                value: ( (if (((SchemeAccess.Scheme globalRef:  #'null?')
+                    value: ( port)))
+                then [((SchemeAccess.Scheme globalRef:  #'current-input-port')
+                    value)]
+                else [((SchemeAccess.Scheme globalRef:  #'car')
+                    value: ( port))]))).].
+
+/* (define (read1 port) (let loop ((next (peek-char port))) (cond ((eof-object? next) next) ((char-whitespace? next) (read-char port) (loop (peek-char port))) ((comment-char? next) (consume-comment port) (loop (peek-char port))) ((sharp-char? next) (read-sharp-thingie port)) ((char-numeric? next) (read-number port)) ((char-alphabetic? next) (read-identifier port)) ((string-char? next) (read-string port)) ((abbrev-char? next) (read-abbreviation port)) ((lparen-char? next) (read-list port)) ((special-initial? next) (read-identifier port)) ((pecular-initial? next) (read-pecular port)) ((rparen-char? next) (consume-char port) rparen-marker) (else (error "read: unacceptable character with code:" (char->integer next)))))) */
+
+ SchemeAccess.Scheme define:  #'read1'
+  as: 
+       [ :port | 
+            [ | loop | := 
+               [ :next | 
+                (if (((SchemeAccess.Scheme globalRef:  #'eof-object?')
+                        value: ( next)))
+                    then [ next]
+                    else [ (if (((SchemeAccess.Scheme globalRef:  #'char-whitespace?')
+                            value: ( next)))
+                        then [ [
+                         ((SchemeAccess.Scheme globalRef:  #'read-char')
+                              value: ( port)).
+                         (loop value: (((SchemeAccess.Scheme globalRef:  #'peek-char')
+                              value: ( port)))).
+                        ] value.]
+                        else [ (if (((SchemeAccess.Scheme globalRef:  #'comment-char?')
+                                value: ( next)))
+                            then [ [
+                             ((SchemeAccess.Scheme globalRef:  #'consume-comment')
+                                  value: ( port)).
+                             (loop value: (((SchemeAccess.Scheme globalRef:  #'peek-char')
+                                  value: ( port)))).
+                            ] value.]
+                            else [ (if (((SchemeAccess.Scheme globalRef:  #'sharp-char?')
+                                    value: ( next)))
+                                then [((SchemeAccess.Scheme globalRef:  #'read-sharp-thingie')
+                                    value: ( port))]
+                                else [ (if (((SchemeAccess.Scheme globalRef:  #'char-numeric?')
+                                        value: ( next)))
+                                    then [((SchemeAccess.Scheme globalRef:  #'read-number')
+                                        value: ( port))]
+                                    else [ (if (((SchemeAccess.Scheme globalRef:  #'char-alphabetic?')
+                                            value: ( next)))
+                                        then [((SchemeAccess.Scheme globalRef:  #'read-identifier')
+                                            value: ( port))]
+                                        else [ (if (((SchemeAccess.Scheme globalRef:  #'string-char?')
+                                                value: ( next)))
+                                            then [((SchemeAccess.Scheme globalRef:  #'read-string')
+                                                value: ( port))]
+                                            else [ (if (((SchemeAccess.Scheme globalRef:  #'abbrev-char?')
+                                                    value: ( next)))
+                                                then [((SchemeAccess.Scheme globalRef:  #'read-abbreviation')
+                                                    value: ( port))]
+                                                else [ (if (((SchemeAccess.Scheme globalRef:  #'lparen-char?')
+                                                        value: ( next)))
+                                                    then [((SchemeAccess.Scheme globalRef:  #'read-list')
+                                                        value: ( port))]
+                                                    else [ (if (((SchemeAccess.Scheme globalRef:  #'special-initial?')
+                                                            value: ( next)))
+                                                        then [((SchemeAccess.Scheme globalRef:  #'read-identifier')
+                                                            value: ( port))]
+                                                        else [ (if (((SchemeAccess.Scheme globalRef:  #'pecular-initial?')
+                                                                value: ( next)))
+                                                            then [((SchemeAccess.Scheme globalRef:  #'read-pecular')
+                                                                value: ( port))]
+                                                            else [ (if (((SchemeAccess.Scheme globalRef:  #'rparen-char?')
+                                                                    value: ( next)))
+                                                                then [ [
+                                                                 ((SchemeAccess.Scheme globalRef:  #'consume-char')
+                                                                      value: ( port)).
+                                                                  (SchemeAccess.Scheme globalRef:  #'rparen-marker')
+                                                                     .
+                                                                ] value.]
+                                                                else [((SchemeAccess.Scheme globalRef:  #'error')
+                                                                    value: ( 'read: unacceptable character with code:') value: (((SchemeAccess.Scheme globalRef:  #'char->integer')
+                                                                    value: ( next))))])])])])])])])])])])])])
+           ].
+           loop valueWithArguments: {
+               ((SchemeAccess.Scheme globalRef:  #'peek-char')
+                    value: ( port)). } ] value.].
+
+/* (define (comment-char? c) (eq? c #\;)) */
+
+ SchemeAccess.Scheme define:  #'comment-char?'
+  as: 
+       [ :c | ((SchemeAccess.Scheme globalRef:  #'eq?')
+                value: ( c) value: ( $;)).].
+
+/* (define (sharp-char? c) (eq? c #\#)) */
+
+ SchemeAccess.Scheme define:  #'sharp-char?'
+  as: 
+       [ :c | ((SchemeAccess.Scheme globalRef:  #'eq?')
+                value: ( c) value: ( $#)).].
+
+/* (define (string-char? c) (eq? c #\")) */
+
+ SchemeAccess.Scheme define:  #'string-char?'
+  as: 
+       [ :c | ((SchemeAccess.Scheme globalRef:  #'eq?')
+                value: ( c) value: ( $")).].
+
+/* (define (lparen-char? c) (eq? c #\()) */
+
+ SchemeAccess.Scheme define:  #'lparen-char?'
+  as: 
+       [ :c | ((SchemeAccess.Scheme globalRef:  #'eq?')
+                value: ( c) value: ( $()).].
+
+/* (define (rparen-char? c) (eq? c #\))) */
+
+ SchemeAccess.Scheme define:  #'rparen-char?'
+  as: 
+       [ :c | ((SchemeAccess.Scheme globalRef:  #'eq?')
+                value: ( c) value: ( $))).].
+
+/* (define (special-initial? c) (memq c special-initials)) */
+
+ SchemeAccess.Scheme define:  #'special-initial?'
+  as: 
+       [ :c | ((SchemeAccess.Scheme globalRef:  #'memq')
+                value: ( c) value: ( (SchemeAccess.Scheme globalRef:  #'special-initials')
+               )).].
+
+/* (define (pecular-initial? c) (memq c pecular-initials)) */
+
+ SchemeAccess.Scheme define:  #'pecular-initial?'
+  as: 
+       [ :c | ((SchemeAccess.Scheme globalRef:  #'memq')
+                value: ( c) value: ( (SchemeAccess.Scheme globalRef:  #'pecular-initials')
+               )).].
+
+/* (define (identifier-subsequent-char? c) (memq c subsequents)) */
+
+ SchemeAccess.Scheme define:  #'identifier-subsequent-char?'
+  as: 
+       [ :c | ((SchemeAccess.Scheme globalRef:  #'memq')
+                value: ( c) value: ( (SchemeAccess.Scheme globalRef:  #'subsequents')
+               )).].
+
+/* (define (abbrev-char? c) (memq c abbreviation-starts)) */
+
+ SchemeAccess.Scheme define:  #'abbrev-char?'
+  as: 
+       [ :c | ((SchemeAccess.Scheme globalRef:  #'memq')
+                value: ( c) value: ( (SchemeAccess.Scheme globalRef:  #'abbreviation-starts')
+               )).].
+
+/* (define (legal-number-char? c) (memq c legal-number-chars-list)) */
+
+ SchemeAccess.Scheme define:  #'legal-number-char?'
+  as: 
+       [ :c | ((SchemeAccess.Scheme globalRef:  #'memq')
+                value: ( c) value: ( (SchemeAccess.Scheme globalRef:  #'legal-number-chars-list')
+               )).].
+
+/* (define (consume-char port) (if (eof-object? (read-char port)) (error "Unexpected End Of File"))) */
+
+ SchemeAccess.Scheme define:  #'consume-char'
+  as: 
+       [ :port |  (if (((SchemeAccess.Scheme globalRef:  #'eof-object?')
+                    value: (((SchemeAccess.Scheme globalRef:  #'read-char')
+                    value: ( port)))))
+                then [((SchemeAccess.Scheme globalRef:  #'error')
+                    value: ( 'Unexpected End Of File'))]).].
+
+/* (define (consume-comment port) (consume-char port) (let loop ((next (peek-char port))) (if (not (or (eof-object? next) (eq? next #\newline))) (begin (consume-char port) (loop (peek-char port)))))) */
+
+ SchemeAccess.Scheme define:  #'consume-comment'
+  as: 
+       [ :port | ((SchemeAccess.Scheme globalRef:  #'consume-char')
+                value: ( port)).
+            [ | loop | := 
+               [ :next | 
+                (if (((SchemeAccess.Scheme globalRef:  #'not')
+                        value: ( [ :temp179 | 
+                        (if ( temp179)
+                            then [ temp179]
+                            else [((SchemeAccess.Scheme globalRef:  #'eq?')
+                                value: ( next) value: ( $
+))]).
+                   ](((SchemeAccess.Scheme globalRef:  #'eof-object?')
+                            value: ( next))))))
+                    then [ [
+                     ((SchemeAccess.Scheme globalRef:  #'consume-char')
+                          value: ( port)).
+                     (loop value: (((SchemeAccess.Scheme globalRef:  #'peek-char')
+                          value: ( port)))).
+                    ] value.])
+           ].
+           loop valueWithArguments: {
+               ((SchemeAccess.Scheme globalRef:  #'peek-char')
+                    value: ( port)). } ] value.].
+
+/* (define (read-sharp-thingie port) (consume-char port) (let ((next (peek-char port))) (case next ((#\t #\f #\T #\F) (make-boolean port)) ((#\e #\i #\o #\b #\d #\x #\E #\I #\O #\B #\D #\X) (read-number-loop '(#\#) port)) ((#\\) (read-character port)) ((#\() (read-vector port)) (else (error "Unknown sharp syntax" next))))) */
+
+ SchemeAccess.Scheme define:  #'read-sharp-thingie'
+  as: 
+       [ :port | ((SchemeAccess.Scheme globalRef:  #'consume-char')
+                value: ( port)). [ :next | 
+                [ :key180 | 
+                    (if (((SchemeAccess.Scheme globalRef:  #'memv')
+                            value: ( key180) value: ( ({ $t.  $f.  $T.  $F. } asPair))))
+                        then [((SchemeAccess.Scheme globalRef:  #'make-boolean')
+                            value: ( port))]
+                        else [ [ :key181 | 
+                            (if (((SchemeAccess.Scheme globalRef:  #'memv')
+                                    value: ( key181) value: ( ({ $e.  $i.  $o.  $b.  $d.  $x.  $E.  $I.  $O.  $B.  $D.  $X. } asPair))))
+                                then [((SchemeAccess.Scheme globalRef:  #'read-number-loop')
+                                    value: ( ({ $#. } asPair)) value: ( port))]
+                                else [ [ :key182 | 
+                                    (if (((SchemeAccess.Scheme globalRef:  #'memv')
+                                            value: ( key182) value: ( ({ $\. } asPair))))
+                                        then [((SchemeAccess.Scheme globalRef:  #'read-character')
+                                            value: ( port))]
+                                        else [ [ :key183 | 
+                                            (if (((SchemeAccess.Scheme globalRef:  #'memv')
+                                                    value: ( key183) value: ( ({ $(. } asPair))))
+                                                then [((SchemeAccess.Scheme globalRef:  #'read-vector')
+                                                    value: ( port))]
+                                                else [ [
+                                                  key183.
+                                                 ((SchemeAccess.Scheme globalRef:  #'error')
+                                                      value: ( 'Unknown sharp syntax') value: ( next)).
+                                                ] value.]).
+                                       ]( key182)]).
+                               ]( key181)]).
+                       ]( key180)]).
+               ]( next).
+           ](((SchemeAccess.Scheme globalRef:  #'peek-char')
+                    value: ( port))).].
+
+/* (define (make-boolean port) (case (read-char port) ((#\t #\T) #t) ((#\f #\F) #f) (else (error "reading boolean: expected #t or #f here")))) */
+
+ SchemeAccess.Scheme define:  #'make-boolean'
+  as: 
+       [ :port |  [ :key184 | 
+                (if (((SchemeAccess.Scheme globalRef:  #'memv')
+                        value: ( key184) value: ( ({ $t.  $T. } asPair))))
+                    then [ true]
+                    else [ [ :key185 | 
+                        (if (((SchemeAccess.Scheme globalRef:  #'memv')
+                                value: ( key185) value: ( ({ $f.  $F. } asPair))))
+                            then [ false]
+                            else [ [
+                              key185.
+                             ((SchemeAccess.Scheme globalRef:  #'error')
+                                  value: ( 'reading boolean: expected #t or #f here')).
+                            ] value.]).
+                   ]( key184)]).
+           ](((SchemeAccess.Scheme globalRef:  #'read-char')
+                    value: ( port))).].
+
+/* (define (read-character port) (consume-char port) (let* ((next (peek-char port))) (cond ((eof-object? next) (error "EOF parsing character while reading file")) ((char-alphabetic? next) (let ((char-name-string (read-identifier-string port))) (cond ((= 1 (string-length char-name-string)) (string-ref char-name-string 0)) ((assq (string->symbol char-name-string) character-names-alist) => (lambda (bucket) (cdr bucket))) (else (error "read: invalid character name" char-name-string))))) (else (read-char port))))) */
+
+ SchemeAccess.Scheme define:  #'read-character'
+  as: 
+       [ :port | ((SchemeAccess.Scheme globalRef:  #'consume-char')
+                value: ( port)).
+           [ :next | 
+              (if (((SchemeAccess.Scheme globalRef:  #'eof-object?')
+                      value: ( next)))
+                  then [((SchemeAccess.Scheme globalRef:  #'error')
+                      value: ( 'EOF parsing character while reading file'))]
+                  else [ (if (((SchemeAccess.Scheme globalRef:  #'char-alphabetic?')
+                          value: ( next)))
+                      then [ [ :charX2DnameX2Dstring | 
+                          (if (((SchemeAccess.Scheme globalRef:  #'=')
+                                  value: ( 1) value: (((SchemeAccess.Scheme globalRef:  #'string-length')
+                                  value: ( charX2DnameX2Dstring)))))
+                              then [((SchemeAccess.Scheme globalRef:  #'string-ref')
+                                  value: ( charX2DnameX2Dstring) value: ( 0))]
+                              else [ [ :result186 | 
+                                  (if ( result186)
+                                      then [((
+                                     [ :bucket | ((SchemeAccess.Scheme globalRef:  #'cdr')
+                                              value: ( bucket)).]) value: ( result186))]
+                                      else [((SchemeAccess.Scheme globalRef:  #'error')
+                                          value: ( 'read: invalid character name') value: ( charX2DnameX2Dstring))]).
+                             ](((SchemeAccess.Scheme globalRef:  #'assq')
+                                      value: (((SchemeAccess.Scheme globalRef:  #'string->symbol')
+                                      value: ( charX2DnameX2Dstring))) value: ( (SchemeAccess.Scheme globalRef:  #'character-names-alist')
+                                     )))]).
+                     ](((SchemeAccess.Scheme globalRef:  #'read-identifier-string')
+                              value: ( port)))]
+                      else [((SchemeAccess.Scheme globalRef:  #'read-char')
+                          value: ( port))])])
+           ](((SchemeAccess.Scheme globalRef:  #'peek-char')
+                value: ( port))).].
+
+/* (define (read-identifier-string port) (let loop ((chars (list (read-char port)))) (let ((next (peek-char port))) (cond ((eof-object? next) (list->string (reverse chars))) ((identifier-subsequent-char? next) (loop (cons (read-char port) chars))) (else (list->string (reverse chars))))))) */
+
+ SchemeAccess.Scheme define:  #'read-identifier-string'
+  as: 
+       [ :port | 
+            [ | loop | := 
+               [ :chars | 
+                [ :next | 
+                    (if (((SchemeAccess.Scheme globalRef:  #'eof-object?')
+                            value: ( next)))
+                        then [((SchemeAccess.Scheme globalRef:  #'list->string')
+                            value: (((SchemeAccess.Scheme globalRef:  #'reverse')
+                            value: ( chars))))]
+                        else [ (if (((SchemeAccess.Scheme globalRef:  #'identifier-subsequent-char?')
+                                value: ( next)))
+                            then [(loop value: (((SchemeAccess.Scheme globalRef:  #'cons')
+                                value: (((SchemeAccess.Scheme globalRef:  #'read-char')
+                                value: ( port))) value: ( chars))))]
+                            else [((SchemeAccess.Scheme globalRef:  #'list->string')
+                                value: (((SchemeAccess.Scheme globalRef:  #'reverse')
+                                value: ( chars))))])]).
+               ](((SchemeAccess.Scheme globalRef:  #'peek-char')
+                        value: ( port)))
+           ].
+           loop valueWithArguments: {
+               ((SchemeAccess.Scheme globalRef:  #'cons')
+                    value: (((SchemeAccess.Scheme globalRef:  #'read-char')
+                    value: ( port))) value: ( nil)). } ] value.].
+
+/* (define (read-number port) (read-number-loop (list (read-char port)) port)) */
+
+ SchemeAccess.Scheme define:  #'read-number'
+  as: 
+       [ :port | ((SchemeAccess.Scheme globalRef:  #'read-number-loop')
+                value: (((SchemeAccess.Scheme globalRef:  #'cons')
+                value: (((SchemeAccess.Scheme globalRef:  #'read-char')
+                value: ( port))) value: ( nil))) value: ( port)).].
+
+/* (define (read-number-loop chars port) (let ((next (peek-char port))) (cond ((eof-object? next) (string->number (list->string (reverse chars)))) ((legal-number-char? next) (read-number-loop (cons (read-char port) chars) port)) (else (string->number (list->string (reverse chars))))))) */
+
+ SchemeAccess.Scheme define:  #'read-number-loop'
+  as: 
+       [ :chars :port |  [ :next | 
+                (if (((SchemeAccess.Scheme globalRef:  #'eof-object?')
+                        value: ( next)))
+                    then [((SchemeAccess.Scheme globalRef:  #'string->number')
+                        value: (((SchemeAccess.Scheme globalRef:  #'list->string')
+                        value: (((SchemeAccess.Scheme globalRef:  #'reverse')
+                        value: ( chars))))))]
+                    else [ (if (((SchemeAccess.Scheme globalRef:  #'legal-number-char?')
+                            value: ( next)))
+                        then [((SchemeAccess.Scheme globalRef:  #'read-number-loop')
+                            value: (((SchemeAccess.Scheme globalRef:  #'cons')
+                            value: (((SchemeAccess.Scheme globalRef:  #'read-char')
+                            value: ( port))) value: ( chars))) value: ( port))]
+                        else [((SchemeAccess.Scheme globalRef:  #'string->number')
+                            value: (((SchemeAccess.Scheme globalRef:  #'list->string')
+                            value: (((SchemeAccess.Scheme globalRef:  #'reverse')
+                            value: ( chars))))))])]).
+           ](((SchemeAccess.Scheme globalRef:  #'peek-char')
+                    value: ( port))).].
+
+/* (define (read-identifier port) (string->symbol (read-identifier-string port))) */
+
+ SchemeAccess.Scheme define:  #'read-identifier'
+  as: 
+       [ :port | ((SchemeAccess.Scheme globalRef:  #'string->symbol')
+                value: (((SchemeAccess.Scheme globalRef:  #'read-identifier-string')
+                value: ( port)))).].
+
+/* (define (read-abbreviation port) (case (read-char port) ((#\`) (list 'quasiquote (read1 port))) ((#\') (list 'quote (read1 port))) ((#\,) (if (eq? #\@ (peek-char port)) (begin (consume-char port) (list 'unquote-splicing (read1 port))) (list 'unquote (read1 port)))) (else (error "Assert failed in reading abbreviation")))) */
+
+ SchemeAccess.Scheme define:  #'read-abbreviation'
+  as: 
+       [ :port |  [ :key187 | 
+                (if (((SchemeAccess.Scheme globalRef:  #'memv')
+                        value: ( key187) value: ( ({ $`. } asPair))))
+                    then [((SchemeAccess.Scheme globalRef:  #'cons')
+                        value: ( #'quasiquote') value: (((SchemeAccess.Scheme globalRef:  #'cons')
+                        value: (((SchemeAccess.Scheme globalRef:  #'read1')
+                        value: ( port))) value: ( nil))))]
+                    else [ [ :key188 | 
+                        (if (((SchemeAccess.Scheme globalRef:  #'memv')
+                                value: ( key188) value: ( ({ $'. } asPair))))
+                            then [((SchemeAccess.Scheme globalRef:  #'cons')
+                                value: ( #'quote') value: (((SchemeAccess.Scheme globalRef:  #'cons')
+                                value: (((SchemeAccess.Scheme globalRef:  #'read1')
+                                value: ( port))) value: ( nil))))]
+                            else [ [ :key189 | 
+                                (if (((SchemeAccess.Scheme globalRef:  #'memv')
+                                        value: ( key189) value: ( ({ $,. } asPair))))
+                                    then [ (if (((SchemeAccess.Scheme globalRef:  #'eq?')
+                                            value: ( $@) value: (((SchemeAccess.Scheme globalRef:  #'peek-char')
+                                            value: ( port)))))
+                                        then [ [
+                                         ((SchemeAccess.Scheme globalRef:  #'consume-char')
+                                              value: ( port)).
+                                         ((SchemeAccess.Scheme globalRef:  #'cons')
+                                              value: ( #'unquote-splicing') value: (((SchemeAccess.Scheme globalRef:  #'cons')
+                                              value: (((SchemeAccess.Scheme globalRef:  #'read1')
+                                              value: ( port))) value: ( nil)))).
+                                        ] value.]
+                                        else [((SchemeAccess.Scheme globalRef:  #'cons')
+                                            value: ( #'unquote') value: (((SchemeAccess.Scheme globalRef:  #'cons')
+                                            value: (((SchemeAccess.Scheme globalRef:  #'read1')
+                                            value: ( port))) value: ( nil))))])]
+                                    else [ [
+                                      key189.
+                                     ((SchemeAccess.Scheme globalRef:  #'error')
+                                          value: ( 'Assert failed in reading abbreviation')).
+                                    ] value.]).
+                           ]( key188)]).
+                   ]( key187)]).
+           ](((SchemeAccess.Scheme globalRef:  #'read-char')
+                    value: ( port))).].
+
+/* (define (read-string port) (consume-char port) (let loop ((chars '())) (let ((next (peek-char port))) (cond ((eof-object? next) (error "read: End Of File reading string")) ((eq? next #\") (consume-char port) (list->string (reverse chars))) ((eq? next #\\) (consume-char port) (let ((following (peek-char port))) (cond ((eof-object? following) (error "EOF in read-string")) ((memq following '(#\" #\\)) (loop (cons (read-char port) chars))) (else (error "Illegal char following #\\" following))))) (else (loop (cons (read-char port) chars))))))) */
+
+ SchemeAccess.Scheme define:  #'read-string'
+  as: 
+       [ :port | ((SchemeAccess.Scheme globalRef:  #'consume-char')
+                value: ( port)).
+            [ | loop | := 
+               [ :chars | 
+                [ :next | 
+                    (if (((SchemeAccess.Scheme globalRef:  #'eof-object?')
+                            value: ( next)))
+                        then [((SchemeAccess.Scheme globalRef:  #'error')
+                            value: ( 'read: End Of File reading string'))]
+                        else [ (if (((SchemeAccess.Scheme globalRef:  #'eq?')
+                                value: ( next) value: ( $")))
+                            then [ [
+                             ((SchemeAccess.Scheme globalRef:  #'consume-char')
+                                  value: ( port)).
+                             ((SchemeAccess.Scheme globalRef:  #'list->string')
+                                  value: (((SchemeAccess.Scheme globalRef:  #'reverse')
+                                  value: ( chars)))).
+                            ] value.]
+                            else [ (if (((SchemeAccess.Scheme globalRef:  #'eq?')
+                                    value: ( next) value: ( $\)))
+                                then [ [
+                                 ((SchemeAccess.Scheme globalRef:  #'consume-char')
+                                      value: ( port)).
+                                  [ :following | 
+                                      (if (((SchemeAccess.Scheme globalRef:  #'eof-object?')
+                                              value: ( following)))
+                                          then [((SchemeAccess.Scheme globalRef:  #'error')
+                                              value: ( 'EOF in read-string'))]
+                                          else [ (if (((SchemeAccess.Scheme globalRef:  #'memq')
+                                                  value: ( following) value: ( ({ $".  $\. } asPair))))
+                                              then [(loop value: (((SchemeAccess.Scheme globalRef:  #'cons')
+                                                  value: (((SchemeAccess.Scheme globalRef:  #'read-char')
+                                                  value: ( port))) value: ( chars))))]
+                                              else [((SchemeAccess.Scheme globalRef:  #'error')
+                                                  value: ( 'Illegal char following #\') value: ( following))])]).
+                                 ](((SchemeAccess.Scheme globalRef:  #'peek-char')
+                                          value: ( port))).
+                                ] value.]
+                                else [(loop value: (((SchemeAccess.Scheme globalRef:  #'cons')
+                                    value: (((SchemeAccess.Scheme globalRef:  #'read-char')
+                                    value: ( port))) value: ( chars))))])])]).
+               ](((SchemeAccess.Scheme globalRef:  #'peek-char')
+                        value: ( port)))
+           ].
+           loop valueWithArguments: {
+                nil. } ] value.].
+
+/* (define (read-pecular port) (let* ((char (read-char port)) (next (peek-char port))) (cond ((memq char '(#\+ #\-)) (if (legal-number-char? next) (read-number-loop (list char) port) (if (eq? char #\+) '+ '-))) ((eq? #\. char) (if (eq? #\. next) (begin (consume-char port) (if (eq? #\. (peek-char port)) (begin (consume-char port) '...) (error "Illegal period literal"))) period-marker)) (else (error "Assert failed in reading pecular identifier" char))))) */
+
+ SchemeAccess.Scheme define:  #'read-pecular'
+  as: 
+       [ :port | 
+           [ :char | 
+             [ :next | 
+                (if (((SchemeAccess.Scheme globalRef:  #'memq')
+                        value: ( char) value: ( ({ $+.  $-. } asPair))))
+                    then [ (if (((SchemeAccess.Scheme globalRef:  #'legal-number-char?')
+                            value: ( next)))
+                        then [((SchemeAccess.Scheme globalRef:  #'read-number-loop')
+                            value: (((SchemeAccess.Scheme globalRef:  #'cons')
+                            value: ( char) value: ( nil))) value: ( port))]
+                        else [ (if (((SchemeAccess.Scheme globalRef:  #'eq?')
+                                value: ( char) value: ( $+)))
+                            then [ #'+']
+                            else [ #'-'])])]
+                    else [ (if (((SchemeAccess.Scheme globalRef:  #'eq?')
+                            value: ( $.) value: ( char)))
+                        then [ (if (((SchemeAccess.Scheme globalRef:  #'eq?')
+                                value: ( $.) value: ( next)))
+                            then [ [
+                             ((SchemeAccess.Scheme globalRef:  #'consume-char')
+                                  value: ( port)).
+                              (if (((SchemeAccess.Scheme globalRef:  #'eq?')
+                                      value: ( $.) value: (((SchemeAccess.Scheme globalRef:  #'peek-char')
+                                      value: ( port)))))
+                                  then [ [
+                                   ((SchemeAccess.Scheme globalRef:  #'consume-char')
+                                        value: ( port)).
+                                    #'...'.
+                                  ] value.]
+                                  else [((SchemeAccess.Scheme globalRef:  #'error')
+                                      value: ( 'Illegal period literal'))]).
+                            ] value.]
+                            else [ (SchemeAccess.Scheme globalRef:  #'period-marker')
+                               ])]
+                        else [((SchemeAccess.Scheme globalRef:  #'error')
+                            value: ( 'Assert failed in reading pecular identifier') value: ( char))])])
+             ](((SchemeAccess.Scheme globalRef:  #'peek-char')
+                  value: ( port)))
+           ](((SchemeAccess.Scheme globalRef:  #'read-char')
+                value: ( port))).].
+
+/* (define (period-marker? thing) (eq? period-marker thing)) */
+
+ SchemeAccess.Scheme define:  #'period-marker?'
+  as: 
+       [ :thing | ((SchemeAccess.Scheme globalRef:  #'eq?')
+                value: ( (SchemeAccess.Scheme globalRef:  #'period-marker')
+               ) value: ( thing)).].
+
+/* (define (rparen-marker? thing) (eq? rparen-marker thing)) */
+
+ SchemeAccess.Scheme define:  #'rparen-marker?'
+  as: 
+       [ :thing | ((SchemeAccess.Scheme globalRef:  #'eq?')
+                value: ( (SchemeAccess.Scheme globalRef:  #'rparen-marker')
+               ) value: ( thing)).].
+
+/* (define (read-list port) (consume-char port) (let loop ((result '())) (let ((thing (read1 port))) (cond ((rparen-marker? thing) (reverse result)) ((period-marker? thing) (let ((next (read1 port))) (if (memq next `(,period-marker ,rparen-marker)) (error "read: ill-formed list") (let ((final (read1 port))) (if (rparen-marker? final) (reverse (cons (cons next (car result)) (cdr result))) (error "read: ill-formed dotted list tail")))))) (else (loop (cons thing result))))))) */
+
+ SchemeAccess.Scheme define:  #'read-list'
+  as: 
+       [ :port | ((SchemeAccess.Scheme globalRef:  #'consume-char')
+                value: ( port)).
+            [ | loop | := 
+               [ :result | 
+                [ :thing | 
+                    (if (((SchemeAccess.Scheme globalRef:  #'rparen-marker?')
+                            value: ( thing)))
+                        then [((SchemeAccess.Scheme globalRef:  #'reverse')
+                            value: ( result))]
+                        else [ (if (((SchemeAccess.Scheme globalRef:  #'period-marker?')
+                                value: ( thing)))
+                            then [ [ :next | 
+                                (if (((SchemeAccess.Scheme globalRef:  #'memq')
+                                        value: ( next) value: (((SchemeAccess.Scheme globalRef:  #'cons')
+                                        value: ( (SchemeAccess.Scheme globalRef:  #'period-marker')
+                                       ) value: (((SchemeAccess.Scheme globalRef:  #'cons')
+                                        value: ( (SchemeAccess.Scheme globalRef:  #'rparen-marker')
+                                       ) value: ( nil)))))))
+                                    then [((SchemeAccess.Scheme globalRef:  #'error')
+                                        value: ( 'read: ill-formed list'))]
+                                    else [ [ :final | 
+                                        (if (((SchemeAccess.Scheme globalRef:  #'rparen-marker?')
+                                                value: ( final)))
+                                            then [((SchemeAccess.Scheme globalRef:  #'reverse')
+                                                value: (((SchemeAccess.Scheme globalRef:  #'cons')
+                                                value: (((SchemeAccess.Scheme globalRef:  #'cons')
+                                                value: ( next) value: (((SchemeAccess.Scheme globalRef:  #'car')
+                                                value: ( result))))) value: (((SchemeAccess.Scheme globalRef:  #'cdr')
+                                                value: ( result))))))]
+                                            else [((SchemeAccess.Scheme globalRef:  #'error')
+                                                value: ( 'read: ill-formed dotted list tail'))]).
+                                   ](((SchemeAccess.Scheme globalRef:  #'read1')
+                                            value: ( port)))]).
+                           ](((SchemeAccess.Scheme globalRef:  #'read1')
+                                    value: ( port)))]
+                            else [(loop value: (((SchemeAccess.Scheme globalRef:  #'cons')
+                                value: ( thing) value: ( result))))])]).
+               ](((SchemeAccess.Scheme globalRef:  #'read1')
+                        value: ( port)))
+           ].
+           loop valueWithArguments: {
+                nil. } ] value.].
+
+/* (define (read-vector port) (let ((list (read-list port))) (if (list? list) (list->vector list) (error "read: ill-formed vector")))) */
+
+ SchemeAccess.Scheme define:  #'read-vector'
+  as: 
+       [ :port |  [ :list | 
+                (if (((SchemeAccess.Scheme globalRef:  #'list?')
+                        value: ( list)))
+                    then [((SchemeAccess.Scheme globalRef:  #'list->vector')
+                        value: ( list))]
+                    else [((SchemeAccess.Scheme globalRef:  #'error')
+                        value: ( 'read: ill-formed vector'))]).
+           ](((SchemeAccess.Scheme globalRef:  #'read-list')
+                    value: ( port))).].
+
+/* (define (debug-read file-name-string) (call-with-input-file file-name-string (lambda (in) (let loop ((form (read1 in))) (if (eof-object? form) 'done (begin (newline) (write form) (loop (read1 in)))))))) */
+
+ SchemeAccess.Scheme define:  #'debug-read'
+  as: 
+       [ :fileX2DnameX2Dstring | ((SchemeAccess.Scheme globalRef:  #'call-with-input-file')
+                value: ( fileX2DnameX2Dstring) value: (
+           [ :in | 
+                [ | loop | := 
+                   [ :form | 
+                    (if (((SchemeAccess.Scheme globalRef:  #'eof-object?')
+                            value: ( form)))
+                        then [ #'done']
+                        else [ [
+                         ((SchemeAccess.Scheme globalRef:  #'newline')
+                              value).
+                         ((SchemeAccess.Scheme globalRef:  #'write')
+                              value: ( form)).
+                         (loop value: (((SchemeAccess.Scheme globalRef:  #'read1')
+                              value: ( in)))).
+                        ] value.])
+               ].
+               loop valueWithArguments: {
+                   ((SchemeAccess.Scheme globalRef:  #'read1')
+                        value: ( in)). } ] value.])).].
+
+]
+"--- E O F ---"

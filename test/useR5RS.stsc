@@ -1,0 +1,7 @@
+Requires module: R5RS.
+Project   name: User
+ default-scope: R5RS 
+       imports: R5RS.
+[
+ stdout cr << R5RS.
+]

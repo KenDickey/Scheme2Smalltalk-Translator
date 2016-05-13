@@ -1,0 +1,86 @@
+"" FILE: PairTests.sts
+"" IMPLEMENTS: Pair test code
+"" AUTHOR: Ken Dickey
+"" DATE: 28 November 2001
+
+include path: SchemeString.sts.
+include path: Pair.sts.
+
+[
+
+ | aPair | := Pair car: 2 cdr: 3.
+  stdout cr << '(cons 2 3) is ' << aPair.
+  stdout cr << '(car ' << aPair << ') is ' << (aPair car).
+  stdout cr << '(cdr ' << aPair << ') is ' << (aPair cdr).
+  stdout cr << 'isPair( 3 ) is ' << (3 isPair).
+  stdout cr << 'isPair( ' << aPair << ' ) is ' << (aPair isPair).
+  stdout cr << 'isProper( ' << aPair << ' ) is ' << (aPair isProper).
+  | aPair2 | := (Pair car: 1 cdr: nil).
+  stdout cr << 'isPair( ' << aPair2 << ' ) is ' << (aPair2 isPair).
+  stdout cr << 'isProper( ' << aPair2 << ' ) is ' << (aPair2 isProper).
+  stdout cr << '(cdr ' << aPair2 << ') is ' << ((aPair2 cdr) asSchemeObjString).
+  | aList | := (Pair car: 1 cdr: (Pair car: 2 cdr: (Pair car: 3 cdr: nil))).
+  stdout cr << 'isProper( ' << aList << ' ) is ' << (aList isProper).
+  aPair2 setCdr: aPair.
+  stdout cr << 'isProper( ' << aPair2 << ' ) is ' << (aPair2 isProper).
+  aPair2 setCar: aList.
+  stdout cr << 'isProper( ' << aPair2 << ' ) is ' << (aPair2 isProper).
+  aPair setCdr: nil.
+  stdout cr << 'isProper( ' << aPair2 << ' ) is ' << (aPair2 isProper).
+  | stList | := {$c. {#sym. 'str'. 1}. 2. (1 + 2). true. false.}.
+  stdout cr << 'SmallScript List: ' << stList 
+            << ' asPair '.
+  stdout cr << '                 is: ' << ((stList asPair) asSchemeObjString).
+  stList[2] := (stList[2] asPair).
+  stdout cr << 'A SmallScript List is Scheme Vector: ' 
+	    << (stList asSchemeObjString).
+
+  | aList | := ({1. 9. 2. 8. 3. 7. 4. 6. 5.} asPair).
+  stdout cr << 'aList is ' << (aList asSchemeObjString).
+  stdout cr << 'aList length is '
+            << (aList length).
+  stdout cr << '(cadddr aList) is '
+            << ((aList cadddr) asSchemeObjString).
+  stdout cr << 'aList collect: [:n|n+1] is '
+            << ((aList collect: [:n | n + 1]) asSchemeObjString).
+  | theSum | := 0.
+  aList do: [:n | (theSum := theSum + n).].
+  stdout cr <<  'aList sum (via do:) is ' << theSum.
+" aList do: [:n | stdout cr << n]."
+  stdout cr <<  'aList select: [:n | n > 5] is '
+            << ((aList select: [:n | n > 5]) asSchemeObjString).
+  stdout cr <<  'aList reject: [:n | n > 5] is '
+            << ((aList reject: [:n | n > 5]) asSchemeObjString).
+  stdout cr <<  'aList detect: [:n | ((n + n) = 8)] is '
+            <<  (aList detect: [:n | ((n + n) = 8)]).
+  stdout cr <<  'aList detect: [:n | ((n * n) = 8)] is '
+            << ((aList detect: [:n | ((n * n) = 8)]) asSchemeObjString).
+  stdout cr.
+
+  stdout cr << '(equal? aList aList) is ' << ((aList = aList) asSchemeString).
+
+  | aList | := ( {#quote. 4.} asPair ).
+  stdout cr << (aList asSchemeString).
+  stdout cr << (aList asSchemeObjString).
+  stdout cr << ' (car ' << (aList asSchemeObjString)
+	    << ') is ' << (aList car).
+  stdout cr << '((car ' << (aList asSchemeObjString)
+	    << ') == #quote) is ' << (((aList car) == #quote) asSchemeString).
+  stdout cr << '((car ' << (aList asSchemeObjString)
+	    << ')  = #quote) is ' << (((aList car) = #quote) asSchemeString).
+  stdout cr << ((Switch new)
+	 case: #quote   do: #ok; 
+	 case: #unquote do: #perhaps; 
+	 default: #bad; 
+	 on: (aList car)).
+
+  aList := ( {#quasiquote. 
+		  {#list. {#unquote. {#'+'. 1. 2.}.}.
+			  {#'unquote-splicing'.
+			     {#map. #abs. {4. -5. 6.}}}.
+			  7.}. } asPair).
+  stdout cr << aList.
+  stdout cr << ' is ' << (aList asSchemeString).
+  stdout cr << ' is ' << (aList asSchemeObjString).
+  stdout cr.
+]

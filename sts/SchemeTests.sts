@@ -1,0 +1,66 @@
+"" FILE: SchemeTests.sts
+"" IMPLEMENTS: Basic ProtoScheme Tests
+"" AUTHOR: Ken Dickey
+"" DATE: 01 December 2001
+
+include path: ProtoScheme.sts.
+
+
+[
+  stdout cr << '<<Starting Scheme Tests>>'.
+
+  | scheme | := R5RS.Scheme newEnv.
+
+  scheme define: #aVector as: {1. #two. 'three'. $4}.
+/*
+  stdout cr << 'aVector has Scheme value '.
+  stdout    << ((scheme globalRef: #aVector) asSchemeObjString).
+*/
+  stdout cr << '(current-input-port) is '
+	    << ((R5RS.Scheme globalRef:  #'current-output-port') value).
+  (scheme globalRef: #newline) value: stdout.
+  (scheme globalRef: #display) value: 'aVector has Scheme value ' value: stdout.
+  (scheme globalRef: #write) value: (scheme globalRef: #aVector)
+			     value: ((R5RS.Scheme globalRef:  #'current-output-port') value).
+
+  | aList | := {$a. #sym. 3. 'some string'. true. false.}.
+  aList := (aList asPair).
+  (scheme globalRef: #newline) value: stdout.
+  (scheme globalRef: #display) value: 'aList is '.
+  (scheme globalRef: #write) value: aList.
+
+  stdout cr << '(pair? aList) is '
+            << (((scheme globalRef: #'pair?')
+		 valueWithArguments: {aList})
+		  asSchemeObjString).
+
+  | listP | := (scheme globalRef: #'list?').
+  stdout cr << '(list? aList) is '
+            << ((listP value: aList) asSchemeObjString).
+  | improperList | := Pair car: 1 cdr 2.
+  stdout cr << '(list? (cons 1 2)) is '
+            << ((listP value: improperList) asSchemeObjString).
+
+  (scheme globalRef: #newline) value: stdout.
+  (scheme globalRef: #display) value: '(: aList "asList") is '.
+  (scheme globalRef: #write) value: (aList asList).
+
+  (scheme globalRef: #newline) value: stdout.
+  (scheme globalRef: #display) value: '(null? nil) is '.
+  (scheme globalRef: #write) value: ((scheme globalRef: #'null?') value: nil).
+
+  (scheme globalRef: #newline) value: stdout.
+  (scheme globalRef: #display) value: '(+ 2 3 4) is '.
+  (scheme globalRef: #write) value: 
+	((scheme globalRef: #'+') valueWithArguments: {2. 3. 4.}).
+
+  (scheme globalRef: #newline) value: stdout.
+  (scheme globalRef: #display) value: '(apply + ''(2 3 4)) '.
+  (scheme globalRef: #write) value: 
+	((scheme globalRef: #apply) value: (scheme globalRef: #'+')
+		                    value: ({2. 3. 4.} asPair)).
+  
+
+  stdout cr << '<<Ending Scheme Tests>>'.
+  stdout cr.
+]

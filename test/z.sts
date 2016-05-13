@@ -1,0 +1,61 @@
+
+"Translated from file D:/SmallScript/ProtoScheme/SCM/z.scm"
+include path: ProtoScheme.sts.
+[
+
+/* (define (char-newline? c) (or (: c "=" 10) (: c "=" 13))) */
+
+ R5RS.Scheme define:  #'char-newline?'
+  as: 
+       [ :c |  [ :temp123 | 
+                (if ((( temp123) == false) not)
+                    then [ temp123]
+                    else [ ( c = 13)]).
+           ]( ( c = 10))].
+
+/* (define (count-newlines fname) (call-with-input-file fname (lambda (in) (let loop ((ch (read-char in)) (char-count 0) (newline-count 0)) (cond ((eof-object? ch) (newline) (display "chars: ") (display char-count) (display " newlines: ") (display newline-count) (newline)) ((char-newline? ch) (loop (read-char in) char-count (+ 1 newline-count))) (else (loop (read-char in) (+ 1 char-count) newline-count))))))) */
+
+ R5RS.Scheme define:  #'count-newlines'
+  as: 
+       [ :fname | ((R5RS.Scheme globalRef:  #'call-with-input-file')
+                value: ( fname) value: (
+           [ :in | 
+                [ | loop | := 
+                   [ :ch :charX2Dcount :newlineX2Dcount | 
+                    (if (((((R5RS.Scheme globalRef:  #'eof-object?')
+                            value: ( ch))) == false) not)
+                        then [ [
+                         ((R5RS.Scheme globalRef:  #'newline')
+                              value).
+                         ((R5RS.Scheme globalRef:  #'display')
+                              value: ( 'chars: ')).
+                         ((R5RS.Scheme globalRef:  #'display')
+                              value: ( charX2Dcount)).
+                         ((R5RS.Scheme globalRef:  #'display')
+                              value: ( ' newlines: ')).
+                         ((R5RS.Scheme globalRef:  #'display')
+                              value: ( newlineX2Dcount)).
+                         ((R5RS.Scheme globalRef:  #'newline')
+                              value).
+                        ] value]
+                        else [ (if (((((R5RS.Scheme globalRef:  #'char-newline?')
+                                value: ( ch))) == false) not)
+                            then [(loop value: (((R5RS.Scheme globalRef:  #'read-char')
+                                value: ( in))) value: ( charX2Dcount) value: (((R5RS.Scheme globalRef:  #'+')
+                                value: ( 1) value: ( newlineX2Dcount))))]
+                            else [(loop value: (((R5RS.Scheme globalRef:  #'read-char')
+                                value: ( in))) value: (((R5RS.Scheme globalRef:  #'+')
+                                value: ( 1) value: ( charX2Dcount))) value: ( newlineX2Dcount))])])
+               ].
+               loop valueWithArguments: {
+                   ((R5RS.Scheme globalRef:  #'read-char')
+                        value: ( in)). 
+                    0. 
+                    0. } ] value]))].
+
+/* (count-newlines "D:/SmallScript/ProtoScheme/SCM/bootstrap.scm") */
+((R5RS.Scheme globalRef:  #'count-newlines')
+      value: ( 'D:/SmallScript/ProtoScheme/SCM/bootstrap.scm')).
+
+]
+"--- E O F ---"

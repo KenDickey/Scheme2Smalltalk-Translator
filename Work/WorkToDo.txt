@@ -1,0 +1,22 @@
+
+Rest args!; nary procedures
+
+quasiquote
+
+Numbers
+  syntax checks & i/o
+  exactness
+  make 'em werk write
+
+internal defines, coalesce nested BEGINs
+
+check nargs
+
+error catching, recovery, diagnostics
+
+define-syntax & friends
+
+character names: #\space #\newline #\tab
+
+
+

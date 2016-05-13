@@ -1,0 +1,156 @@
+include ProtoScheme.sts.
+[
+/* (define special-initial-chars '"!$%&/:*<=>?^_~") */
+
+ R5RS.Scheme define:  #'special-initial-chars'
+  as:  '!$%&/:*<=>?^_~'.
+
+/* (define special-initials (string->list special-initial-chars)) */
+
+ R5RS.Scheme define:  #'special-initials'
+  as: ((R5RS.Scheme globalRef:  #'string->list')
+            value: ( (R5RS.Scheme globalRef:  #'special-initial-chars')
+           )).
+
+/* (define special-subsequent-chars '"+-.@") */
+
+ R5RS.Scheme define:  #'special-subsequent-chars'
+  as:  '+-.@'.
+
+/* (define pecular-identifier '(+ - ...)) */
+
+ R5RS.Scheme define:  #'pecular-identifier'
+  as:  ({ #'+'.  #'-'.  #'...'. } asPair).
+
+/* (define pecular-initials '(#\+ #\- #\.)) */
+
+ R5RS.Scheme define:  #'pecular-initials'
+  as:  ({ $+.  $-.  $.. } asPair).
+
+/* (define syntactic-keywords '(else => define . ,unquote-splicing)) */
+
+ R5RS.Scheme define:  #'syntactic-keywords'
+  as:  ({ #'else'.  #'=>'.  #'define'.  #'unquote'.  #'unquote-splicing'. } asPair).
+
+/* (define expression-keywords '(quote lambda if set! begin cond and or case let let* letrec do delay quasiquote)) */
+
+ R5RS.Scheme define:  #'expression-keywords'
+  as:  ({ #'quote'.  #'lambda'.  #'if'.  #'set!'.  #'begin'.  #'cond'.  #'and'.  #'or'.  #'case'.  #'let'.  #'let*'.  #'letrec'.  #'do'.  #'delay'.  #'quasiquote'. } asPair).
+
+/* (define character-names-alist `((space . ,(integer->char 32)) (tab . ,(integer->char 9)) (return . ,(integer->char 13)) (newline . ,(integer->char 10)) (formfeed . ,(integer->char 12)))) */
+
+ R5RS.Scheme define:  #'character-names-alist'
+  as: ((R5RS.Scheme globalRef:  #'cons')
+            value: (((R5RS.Scheme globalRef:  #'cons')
+            value: ( #'space') value: (((R5RS.Scheme globalRef:  #'integer->char')
+            value: ( 32))))) value: (((R5RS.Scheme globalRef:  #'cons')
+            value: (((R5RS.Scheme globalRef:  #'cons')
+            value: ( #'tab') value: (((R5RS.Scheme globalRef:  #'integer->char')
+            value: ( 9))))) value: (((R5RS.Scheme globalRef:  #'cons')
+            value: (((R5RS.Scheme globalRef:  #'cons')
+            value: ( #'return') value: (((R5RS.Scheme globalRef:  #'integer->char')
+            value: ( 13))))) value: (((R5RS.Scheme globalRef:  #'cons')
+            value: (((R5RS.Scheme globalRef:  #'cons')
+            value: ( #'newline') value: (((R5RS.Scheme globalRef:  #'integer->char')
+            value: ( 10))))) value: (((R5RS.Scheme globalRef:  #'cons')
+            value: (((R5RS.Scheme globalRef:  #'cons')
+            value: ( #'formfeed') value: (((R5RS.Scheme globalRef:  #'integer->char')
+            value: ( 12))))) value: ( nil)))))))))).
+
+/* (define token-classes '(identifier boolean number character string lparen rparen sharp-lparen quote backquote comma comma-splice period)) */
+
+ R5RS.Scheme define:  #'token-classes'
+  as:  ({ #'identifier'.  #'boolean'.  #'number'.  #'character'.  #'string'.  #'lparen'.  #'rparen'.  #'sharp-lparen'.  #'quote'.  #'backquote'.  #'comma'.  #'comma-splice'.  #'period'. } asPair).
+
+/* (define abbreviation-starts '(#\, #\' #\`)) */
+
+ R5RS.Scheme define:  #'abbreviation-starts'
+  as:  ({ $,.  $'.  $`. } asPair).
+
+/* (define radix-chars '"bodx") */
+
+ R5RS.Scheme define:  #'radix-chars'
+  as:  'bodx'.
+
+/* (define exactness-chars '"ie") */
+
+ R5RS.Scheme define:  #'exactness-chars'
+  as:  'ie'.
+
+/* (define letter-chars '"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") */
+
+ R5RS.Scheme define:  #'letter-chars'
+  as:  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.
+
+/* (define digit-chars '"0123456789") */
+
+ R5RS.Scheme define:  #'digit-chars'
+  as:  '0123456789'.
+
+/* (define num-2-chars '"01") */
+
+ R5RS.Scheme define:  #'num-2-chars'
+  as:  '01'.
+
+/* (define num-8-chars '"01234567") */
+
+ R5RS.Scheme define:  #'num-8-chars'
+  as:  '01234567'.
+
+/* (define num-10-chars digit-chars) */
+
+ R5RS.Scheme define:  #'num-10-chars'
+  as:  (R5RS.Scheme globalRef:  #'digit-chars')
+           .
+
+/* (define num-16-chars '"01234567689abcdefABCDEF") */
+
+ R5RS.Scheme define:  #'num-16-chars'
+  as:  '01234567689abcdefABCDEF'.
+
+/* (define exponent-marker-chars '"esfdl") */
+
+ R5RS.Scheme define:  #'exponent-marker-chars'
+  as:  'esfdl'.
+
+/* (define sign-chars '"+-") */
+
+ R5RS.Scheme define:  #'sign-chars'
+  as:  '+-'.
+
+/* (define legal-number-chars-list (append (string->list sign-chars) (string->list num-16-chars) (string->list exponent-marker-chars) (string->list radix-chars) (string->list exactness-chars) (list #\. #\# #\@ #\/))) */
+
+ R5RS.Scheme define:  #'legal-number-chars-list'
+  as: ((R5RS.Scheme globalRef:  #'append')
+           
+        valueWithArguments: { ((R5RS.Scheme globalRef:  #'string->list')
+            value: ( (R5RS.Scheme globalRef:  #'sign-chars')
+           )). ((R5RS.Scheme globalRef:  #'string->list')
+            value: ( (R5RS.Scheme globalRef:  #'num-16-chars')
+           )). ((R5RS.Scheme globalRef:  #'string->list')
+            value: ( (R5RS.Scheme globalRef:  #'exponent-marker-chars')
+           )). ((R5RS.Scheme globalRef:  #'string->list')
+            value: ( (R5RS.Scheme globalRef:  #'radix-chars')
+           )). ((R5RS.Scheme globalRef:  #'string->list')
+            value: ( (R5RS.Scheme globalRef:  #'exactness-chars')
+           )). ((R5RS.Scheme globalRef:  #'cons')
+            value: ( $.) value: (((R5RS.Scheme globalRef:  #'cons')
+            value: ( $#) value: (((R5RS.Scheme globalRef:  #'cons')
+            value: ( $@) value: (((R5RS.Scheme globalRef:  #'cons')
+            value: ( $/) value: ( nil)))))))).}).
+
+ R5RS.Scheme define:  #'subsequents'
+  as: ((R5RS.Scheme globalRef:  #'append')
+           
+        valueWithArguments: { ((R5RS.Scheme globalRef:  #'string->list')
+            value: ( (R5RS.Scheme globalRef:  #'letter-chars')
+           )). ((R5RS.Scheme globalRef:  #'string->list')
+            value: ( (R5RS.Scheme globalRef:  #'digit-chars')
+           )). ((R5RS.Scheme globalRef:  #'string->list')
+            value: ( (R5RS.Scheme globalRef:  #'special-initial-chars')
+           )). ((R5RS.Scheme globalRef:  #'string->list')
+            value: ( (R5RS.Scheme globalRef:  #'special-subsequent-chars')
+           )).}).
+
+stdout cr << ((R5RS.Scheme globalRef:  #'subsequents') asSchemeObjString).
+]

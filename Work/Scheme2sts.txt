@@ -1,0 +1,58 @@
+"" FILE: Scheme2sts.txt
+"" IMPLEMENTS: Scheme <-> SmallScript correspondence
+"" AUTHOR: Ken Dickey
+"" DATE: 3 December 2001
+
+Symbols: 'foo    <-> #foo   [sts symbols are case sensitive]
+Strings: "foo"	 <-> 'foo'
+	 #t	 <-> true
+	 #f	 <-> false
+	 ()	 <-> nil
+
+NB: KeyWords !!! (Scheme & STS)
+
+(lambda (a b) (+ a b) <-> [:a :b| a + b]
+
+(apply f '(a b c)) <-> (f valueWithArguments: {#a. #b. #c.})
+
+(set! var <exp>) <-> var := <exp>.
+
+(define name simple-value) <-> Scheme.define: name as: simpleValue.
+(define name <exp>) <-> Scheme.define: name as: ([<exp>] value).
+(define (name arg..) <exp>) <-> Scheme.define: name as: ([arg..|<exp>]).
+
+=====================================================================
+(if <pred> <conseq> <alt>)	-> if <pred> <conseq> else <alt>.
+(if <pred> <conseq>)		-> if <pred> <conseq>.
+=====================================================================
+(let ( (a <a>) (b <b>) ..) body..)
+->
+((lambda (a b ..) <a> <b> ..) body..)  -> [:a :b ..| body..] (a b ..).
+=====================================================================
+(let loop ((n n) (a 1))
+  (if (< n 2) a (loop (- n 1) (* n a))))
+
+		      -> | loop | := 
+			   [:n :a | if (n < 2) 
+				    then [a] 
+				    else [loop :value (n - 1) value: (n * a)]].
+		          loop value: n value: 1.
+=====================================================================
+(let* ( (a 1) (b (+ a 2)) ) body ..)
+->
+((lambda (a) (lambda (b) body..) (+ a 2)) 1)
+		    -> [:a | [:b | body..](a+1.)](1).
+=====================================================================
+(letrec ( (a <a>) (b <b>) ..) body..)
+	->
+	| a b .. |.
+        a := <a>.
+	b := <b>.
+	..
+	body..
+
+
+=====================================================================
+=====================================================================
+=====================================================================
+=====================================================================

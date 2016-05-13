@@ -1,0 +1,24 @@
+'(#\c "str" sym #(1 2) () #t #f 343 (a b c))
+
+=======display: 
+ c
+ str
+ sym
+ #(1 2)
+ ()
+ #t
+ #f
+ 343
+ (a b c)
+
+=======write:
+ #\c
+ "str"
+ sym
+ #(1 2)
+ () 
+ #t
+ #f
+ 343
+ (a b c)
+
