@@ -1,2 +1,0 @@
-https://github.com/Cuis-Smalltalk-Learning/Learning-Cuis/blob/master/PackageRef.md
-https://github.com/Cuis-Smalltalk-Learning/Learning-Cuis/blob/master/Quick-UI-Tour.md
