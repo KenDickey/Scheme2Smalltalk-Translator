@@ -1,6 +1,6 @@
 # Scheme2Smalltalk-Translator
 
-This is a collection of archived files from a Scheme->Smalltalk translator which last eas used in 2002 under Squeak-3.2.
+This is a collection of archived files from a Scheme->Smalltalk translator which last used in 2002 under Squeak-3.2.
 
 At the time, the translator translated R5RS Scheme into Squeak Smalltalk.
 
@@ -15,3 +15,41 @@ The kernel/glue code is in file "SmallScheme.16.cs".
 Files from directory 'scm' are translated in directory 'st'.
 
 There is a bunch of cruft from various areas (e.g. .sts files from Dave Simmons' SmallScript Smalltalk implementation.
+
+NOTES:
+
+The basic strategy is to have a Scheme global environment with closures/blocks bound to transliterated Scheme identifiers.
+
+E.g. from "scm/booleans.scm"
+
+
+````Scheme
+(define (boolean? obj) (: obj "isKindOf:" ($ "Boolean")))
+
+(define (not b) 
+  ;; (if (eq? b #f) #t #f) 
+  ;; -- bummed for speed
+  (if (: b == #f) #t #f))
+````
+
+There are two "loophole functions" here:  $ and :
+
+
+(: <whatever>) means "pass this through as is"
+($ <whatever>) means "use the Smalltalk value of this here"
+
+````Smalltalk
+
+SmallScheme define:  #'booleanX3F'    "boolean?"
+  as: ( 
+       [ :obj |  ( obj isKindOf: Boolean)] )
+ .
+
+
+ SmallScheme define:  #'not'
+  as: ( 
+       [ :b |  ((( ( b == false)) == false) not)
+               	ifTrue: [ true]
+               	ifFalse: [ false]] )
+ .
+````
