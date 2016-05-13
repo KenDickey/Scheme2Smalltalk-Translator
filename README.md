@@ -4,7 +4,7 @@ This is a collection of archived files from a Scheme->Smalltalk translator which
 
 At the time, the translator translated R5RS Scheme into Squeak Smalltalk.
 
-The translator was able to translate itself.
+As with any good bootstrap, the translated translator was able to translate itself.
 
 The code, with two minor exceptions, passed the R5RS test suite, including the Call/CC cases.
 
@@ -57,4 +57,4 @@ SmallScheme define:  #'booleanX3F'    "boolean?"
 Aside: the odd looking definition for #'not' is because in Scheme anything not #f is true and the translator knows this.
 
 
-Also, Scheme identifiers use many more characters than allowable is Smalltalk, so characters like ? translate into X and a hex value for Smalltalk.
+Also, Scheme identifiers use many more characters than allowable in Smalltalk, so characters like ? translate into X and a hex value for Smalltalk.
