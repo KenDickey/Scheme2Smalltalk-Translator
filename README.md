@@ -14,7 +14,8 @@ The kernel/glue code is in file "SmallScheme.16.cs".
 
 Files from directory 'scm' are translated in directory 'st'.
 
-There is a bunch of cruft from various areas (e.g. .sts files from Dave Simmons' SmallScript Smalltalk implementation.
+There is a bunch of cruft from various areas (e.g. .sts files from Dave Simmons' SmallScript Smalltalk implementation).
+
 
 NOTES:
 
@@ -34,9 +35,9 @@ E.g. from "scm/booleans.scm"
 
 There are two "loophole functions" here:  $ and :
 
+(: "mumble") means "pass this through as is"
 
-(: <whatever>) means "pass this through as is"
-($ <whatever>) means "use the Smalltalk value of this here"
+($ "mumble") means "use the Smalltalk value of this here"
 
 ````Smalltalk
 
@@ -53,3 +54,7 @@ SmallScheme define:  #'booleanX3F'    "boolean?"
                	ifFalse: [ false]] )
  .
 ````
+Aside: the odd looking definition for #'not' is because in Scheme anything not #f is true and the translator knows this.
+
+
+Also, Scheme identifiers use many more characters than allowable is Smalltalk, so characters like ? translate into X and a hex value for Smalltalk.
